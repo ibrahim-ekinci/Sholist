@@ -2,4 +2,28 @@
     <string name="app_name">Sholist</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Login</string>
+    <string name="login_">Login!</string>
+    <string name="forget_your_password">Forgot my password.</string>
+    <string name="prompt_email">E-mail</string>
+    <string name="prompt_password">Password</string>
+    <string name="or">OR</string>
+    <string name="dont_have_a_accont">Dont you have an account?</string>
+    <string name="register_">Register!</string>
+    <string name="register">Register</string>
+    <string name="all_fields_are_required">All fields are required. Please enter all fields and continue.</string>
+    <string name="the_terms_of_use.">The terms of use.</string>
+    <string name="i_have_accept">I have read and accept.</string>
+    <string name="do_you_have_accont">Do you have Sholist account?</string>
+    <string name="you_can_reset_your_password">You can reset your password with the reset link we send to your email address.</string>
+    <string name="send_mail">Send mail</string>
+    <string name="set_your_username_and_name">Set your username and name</string>
+    <string name="please_set_a_unique_username">Please set a unique username and enter your name.</string>
+    <string name="name_surname">Name Surname</string>
+    <string name="username">Username</string>
+    <string name="save">Save</string>
+    <string name="email_verification">Email Verification</string>
+    <string name="please_confirm_your_mail">Please confirm your e-mail by clicking the link sent to your e-mail address and then login.</string>
+    <string name="didnt_you_get_any_mail">Didn t you get any mail?</string>
+    <string name="send_new_mail">Send new mail!</string>
 </resources>
