@@ -1,5 +1,6 @@
 package com.gloorystudio.sholist.view.login
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.FragmentLoginBinding
+import com.gloorystudio.sholist.view.main.MainActivity
 
 
 class LoginFragment : Fragment() {
@@ -32,6 +34,11 @@ class LoginFragment : Fragment() {
         }
         binding.textViewForget.setOnClickListener {
             LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment().Go(it)
+        }
+        binding.btnLogin.setOnClickListener {
+            val intent = Intent(requireContext(),MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
         }
 
 

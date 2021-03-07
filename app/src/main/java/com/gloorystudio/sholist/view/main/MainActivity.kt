@@ -1,4 +1,4 @@
-package com.gloorystudio.sholist.view
+package com.gloorystudio.sholist.view.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

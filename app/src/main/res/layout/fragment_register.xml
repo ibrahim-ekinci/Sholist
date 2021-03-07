@@ -21,7 +21,6 @@
                 android:layout_marginEnd="16dp"
                 android:gravity="center|start|center_horizontal|left|center_vertical"
                 android:text="@string/register"
-
                 android:textSize="28dp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -116,14 +115,14 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
                         android:text="@string/the_terms_of_use."
-                        android:textSize="15sp"
+                        android:textSize="13sp"
                         android:textColor="@color/sho_green" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="15sp"
+                        android:textSize="13sp"
                         android:layout_marginLeft="5dp"
                         android:text="@string/i_have_accept"
 />

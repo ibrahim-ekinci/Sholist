@@ -11,5 +11,10 @@
     <color name="sho_green">#7fbc4a</color>
     <color name="sho_gray">#787878</color>
     <color name="green_dark">#4A8E10</color>
+    <color name="card_bg1">#39A1F7</color>
+    <color name="card_bg2">#26BFBD</color>
+    <color name="card_bg3">#FFAB86</color>
+    <color name="card_bg4">#D8D8D8</color>
+
 
 </resources>

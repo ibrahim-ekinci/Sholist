@@ -1,0 +1,85 @@
+package com.gloorystudio.sholist.view.main
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.gloorystudio.sholist.R
+import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
+import com.gloorystudio.sholist.databinding.FragmentMainBinding
+import com.gloorystudio.sholist.model.Item
+import com.gloorystudio.sholist.model.ShoppingCard
+import com.gloorystudio.sholist.model.User
+import com.gloorystudio.sholist.viewmodel.ShoppingCardViewModel
+
+
+class MainFragment : Fragment() {
+
+    private lateinit var viewModel :ShoppingCardViewModel
+    private val shoppingCardAdapter=ShoppingCardAdapter(arrayListOf())
+    var sList: ArrayList<ShoppingCard> = ArrayList<ShoppingCard>()
+    var itemList: ArrayList<Item> = ArrayList<Item>()
+    var userList: ArrayList<User> = ArrayList<User>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
+    private lateinit var  binding : FragmentMainBinding
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        binding= DataBindingUtil.inflate(inflater,R.layout.fragment_main,container,false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        userList.add(User("1","Halil İbrahim","Ekinci","ibrahim","1"))
+        userList.add(User("2","Yunus Emre","Bulut","yunusemre","2"))
+        userList.add(User("3","Hilal","Tokgöz","hilal","3"))
+        userList.add(User("4","Recep","Yeşilkaya","recep","4"))
+
+        itemList.add(Item("1","Ekmek",2,1,true))
+        itemList.add(Item("2","Elma",3,1,true))
+        itemList.add(Item("3","Armut",1,2,true))
+        itemList.add(Item("4","Muz",1,2,true))
+        itemList.add(Item("5","Kivi",1,3,false))
+        itemList.add(Item("6","Cips",1,3,false))
+        itemList.add(Item("7","Kraker",1,4,false))
+        itemList.add(Item("8","Selpak",1,4,false))
+        itemList.add(Item("9","Su",2,5,false))
+        itemList.add(Item("10","Kola",2,5,false))
+
+
+        sList.add(ShoppingCard("1","My Shoping List","1",1,userList,itemList))
+        sList.add(ShoppingCard("2","My Shoping List1","1",1,userList,itemList))
+        sList.add(ShoppingCard("3","My Shoping List2","1",2,userList,itemList))
+        sList.add(ShoppingCard("4","My Shoping List3","1",3,userList,itemList))
+        sList.add(ShoppingCard("5","My Shoping List4","1",4,userList,itemList))
+
+
+        if(sList.isEmpty()) binding.llEmptyList.visibility=View.VISIBLE
+        else binding.llEmptyList.visibility=View.GONE
+
+        viewModel = ViewModelProvider(this).get(ShoppingCardViewModel::class.java)
+        viewModel.refreshShoppingCardsData(sList)
+        binding.rvShopingcards.layoutManager=LinearLayoutManager(requireContext())
+        binding.rvShopingcards.adapter=shoppingCardAdapter
+        observeLiveData()
+    }
+
+    private fun observeLiveData() {
+        viewModel.ShoppingCards.observe(viewLifecycleOwner,{cards->
+            cards?.let {
+                shoppingCardAdapter.updateShopingCard(it)
+            }
+        })
+    }
+
+}
