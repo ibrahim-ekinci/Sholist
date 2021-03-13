@@ -2,15 +2,14 @@ package com.gloorystudio.sholist.view.main
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
 import com.gloorystudio.sholist.databinding.DialogNewlistBinding
@@ -32,17 +31,39 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+        setHasOptionsMenu(true)
     }
     private lateinit var  binding : FragmentMainBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+
+
         binding= DataBindingUtil.inflate(inflater,R.layout.fragment_main,container,false)
         return binding.root
     }
 
+
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.topAppBar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.menu_item_info->{
+
+                }
+                R.id.menu_item_settings->{
+                    MainFragmentDirections.actionMainFragmentToSettingsFragment().Go(binding.topAppBar)
+                }
+            }
+            true
+        }
+
+
+
 
         binding.floatingActionButton.setOnClickListener {
             var dialog =Dialog(requireContext())

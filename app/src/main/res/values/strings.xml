@@ -40,4 +40,8 @@
     <string name="add">Add</string>
     <string name="add_list_name">Add List Name</string>
     <string name="set_color">Set color</string>
+    <string name="set_user_data">Set User Information</string>
+    <string name="change_password">Change my password.</string>
+    <string name="oldpassword">Old Password</string>
+    <string name="new_password">New Password</string>
 </resources>
