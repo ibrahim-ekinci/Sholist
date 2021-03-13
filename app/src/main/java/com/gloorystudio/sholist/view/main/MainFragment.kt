@@ -1,15 +1,19 @@
 package com.gloorystudio.sholist.view.main
 
+import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
+import com.gloorystudio.sholist.databinding.DialogNewlistBinding
 import com.gloorystudio.sholist.databinding.FragmentMainBinding
 import com.gloorystudio.sholist.model.Item
 import com.gloorystudio.sholist.model.ShoppingCard
@@ -39,6 +43,33 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.floatingActionButton.setOnClickListener {
+            var dialog =Dialog(requireContext())
+            var color=1
+            val dialogBinding = DialogNewlistBinding.inflate(LayoutInflater.from(requireContext()))
+            dialogBinding.llBlue.setOnClickListener {
+                color=1
+                dialogBinding.tvBlue.setTextColor(ContextCompat.getColor(requireContext(),R.color.card_bg1))
+                dialogBinding.tvGreen.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
+                dialogBinding.tvOrange.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
+            }
+            dialogBinding.llGreen.setOnClickListener {
+                color=2
+                dialogBinding.tvBlue.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
+                dialogBinding.tvGreen.setTextColor(ContextCompat.getColor(requireContext(),R.color.card_bg2))
+                dialogBinding.tvOrange.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
+            }
+            dialogBinding.llOrange.setOnClickListener {
+                color=3
+                dialogBinding.tvBlue.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
+                dialogBinding.tvGreen.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
+                dialogBinding.tvOrange.setTextColor(ContextCompat.getColor(requireContext(),R.color.card_bg3))
+            }
+            dialog.setContentView(dialogBinding.root)
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
 
         userList.add(User("1","Halil İbrahim","Ekinci","ibrahim","1"))
         userList.add(User("2","Yunus Emre","Bulut","yunusemre","2"))
