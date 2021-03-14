@@ -62,7 +62,9 @@ class MainFragment : Fragment() {
             true
         }
 
-
+        shoppingCardAdapter.onClickCard{ shoppingCard->
+            MainFragmentDirections.actionMainFragmentToListFragment(shoppingCard).Go(binding.topAppBar)
+        }
 
 
         binding.floatingActionButton.setOnClickListener {
@@ -92,6 +94,10 @@ class MainFragment : Fragment() {
             dialog.show()
         }
 
+        userList.clear()
+        itemList.clear()
+        sList.clear()
+
         userList.add(User("1","Halil İbrahim","Ekinci","ibrahim","1"))
         userList.add(User("2","Yunus Emre","Bulut","yunusemre","2"))
         userList.add(User("3","Hilal","Tokgöz","hilal","3"))
@@ -107,6 +113,7 @@ class MainFragment : Fragment() {
         itemList.add(Item("8","Selpak",1,4,false))
         itemList.add(Item("9","Su",2,5,false))
         itemList.add(Item("10","Kola",2,5,false))
+
 
 
         sList.add(ShoppingCard("1","My Shoping List","1",1,userList,itemList))

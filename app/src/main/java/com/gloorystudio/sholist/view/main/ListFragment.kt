@@ -5,9 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.FragmentListBinding
+import com.gloorystudio.sholist.model.ShoppingCard
 
 
 class ListFragment : Fragment() {
@@ -27,6 +29,22 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var shoppingCard:ShoppingCard?=null
+        arguments?.let {
+            val myArgs =ListFragmentArgs.fromBundle(it)
+            shoppingCard = myArgs.ShoppingCard
+        }
+        shoppingCard?.let {  shoppingCardData->
+        val color = shoppingCardData.color
+            when(color){
+                1-> binding.clList.setBackgroundColor(ContextCompat.getColor(binding.clList.context,R.color.card_bg1))
+                2-> binding.clList.setBackgroundColor(ContextCompat.getColor(binding.clList.context,R.color.card_bg2))
+                3-> binding.clList.setBackgroundColor(ContextCompat.getColor(binding.clList.context,R.color.card_bg3))
+            }
+
+
+
+        }
 
     }
 

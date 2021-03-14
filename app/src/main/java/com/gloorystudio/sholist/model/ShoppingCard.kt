@@ -1,13 +1,16 @@
 package com.gloorystudio.sholist.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
+
+@Parcelize
 data class ShoppingCard (
-            val id:String,
-            val name:String,
-            val creatorId:String,
-            val color:Int,
-            val userList:ArrayList<User>,
-            val itemList:ArrayList<Item>
-        ){
-
-
-}
+            var id:String,
+            var name:String,
+            var creatorId:String,
+            var color:Int,
+            var userList:ArrayList<User>,
+            var itemList:ArrayList<Item>
+            //var tokenType: @RawValue Any? = null
+        ) : Parcelable

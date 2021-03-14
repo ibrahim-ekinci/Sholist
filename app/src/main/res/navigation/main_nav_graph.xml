@@ -17,7 +17,11 @@
     <fragment
         android:id="@+id/listFragment"
         android:name="com.gloorystudio.sholist.view.main.ListFragment"
-        android:label="ListFragment" />
+        android:label="ListFragment" >
+        <argument
+            android:name="ShoppingCard"
+            app:argType="com.gloorystudio.sholist.model.ShoppingCard" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.gloorystudio.sholist.view.main.SettingsFragment"
