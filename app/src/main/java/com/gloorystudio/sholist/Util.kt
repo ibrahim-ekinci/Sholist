@@ -23,12 +23,14 @@ fun ArrayList<Item>.getCheckedCount():Int{
 }
 fun ArrayList<User>.getUserNames():String{
     var names=""
-    for (u in this){
-       names="$names, ${u.name}"
-        if(names.length>32){
-            names.substring(1,32)
-            names+="..."
-            return names.substring(1)
+    this?.let {
+        for (u in this){
+            names="$names, ${u.name}"
+            if(names.length>32){
+                names.substring(1,32)
+                names+="..."
+                return names.substring(1)
+            }
         }
     }
     return names

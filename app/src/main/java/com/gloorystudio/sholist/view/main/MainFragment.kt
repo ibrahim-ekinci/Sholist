@@ -103,16 +103,16 @@ class MainFragment : Fragment() {
         userList.add(User("3","Hilal","Tokgöz","hilal","3"))
         userList.add(User("4","Recep","Yeşilkaya","recep","4"))
 
-        itemList.add(Item("1","Ekmek",2,1,true))
-        itemList.add(Item("2","Elma",3,1,true))
-        itemList.add(Item("3","Armut",1,2,true))
-        itemList.add(Item("4","Muz",1,2,true))
-        itemList.add(Item("5","Kivi",1,3,false))
-        itemList.add(Item("6","Cips",1,3,false))
-        itemList.add(Item("7","Kraker",1,4,false))
-        itemList.add(Item("8","Selpak",1,4,false))
-        itemList.add(Item("9","Su",2,5,false))
-        itemList.add(Item("10","Kola",2,5,false))
+        itemList.add(Item("1","Ekmek",2,1,true,R.drawable.ic_jam))
+        itemList.add(Item("2","Elma",3,1,true,R.drawable.ic_jam))
+        itemList.add(Item("3","Armut",1,2,true,R.drawable.ic_jam))
+        itemList.add(Item("4","Muz",1,2,true,R.drawable.ic_jam))
+        itemList.add(Item("5","Kivi",1,3,false,R.drawable.ic_jam))
+        itemList.add(Item("6","Cips",1,3,false,R.drawable.ic_jam))
+        itemList.add(Item("7","Kraker",1,4,false,R.drawable.ic_jam))
+        itemList.add(Item("8","Selpak",1,4,false,R.drawable.ic_jam))
+        itemList.add(Item("9","Su",2,5,false,R.drawable.ic_jam))
+        itemList.add(Item("10","Kola",2,5,false,R.drawable.ic_jam))
 
 
 

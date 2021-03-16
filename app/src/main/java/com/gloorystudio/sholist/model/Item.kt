@@ -1,6 +1,9 @@
 package com.gloorystudio.sholist.model
 
 import android.os.Parcelable
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
+
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -9,5 +12,10 @@ data class Item(
     val name:String,
     val count:Int,
     val type:Int,
-    val checked:Boolean
-): Parcelable
+    val checked:Boolean,
+    val img:Int
+): Parcelable{
+
+
+
+}

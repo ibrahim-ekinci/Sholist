@@ -4,6 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ListFragment">
+
+    <data>
+        <import type="com.gloorystudio.sholist.UtilKt" />
+        <variable
+            name="shoppingCard"
+            type="com.gloorystudio.sholist.model.ShoppingCard" />
+    </data>
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_list"
         android:layout_width="match_parent"
@@ -28,19 +37,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="150dp"
-            android:layout_marginBottom="-50dp"
-            app:cardCornerRadius="50dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent">
-
-        </com.google.android.material.card.MaterialCardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -59,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center|start|left"
-                android:text="@string/register"
+                android:text="@{shoppingCard.name}"
                 android:textColor="@color/white"
                 android:textSize="28dp"
                 android:textStyle="bold"
@@ -68,14 +64,101 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_gravity="right"
                 android:src="@drawable/ic_baseline_edit_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="150dp"
+            android:layout_marginBottom="-50dp"
+            app:cardCornerRadius="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="55dp"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_list_name">
+
+                <TextView
+                    android:id="@+id/tv_peoples"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|start|center_horizontal|left|center_vertical"
+                    android:maxLength="38"
+                    android:text="@{UtilKt.getUserNames(shoppingCard.userList)}"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_peoples"
+                    android:layout_marginLeft="25dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_peoples" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_peoples"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="25dp"
+                    android:src="@drawable/people"
+                    android:tint="@color/sho_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_item_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:layout_marginTop="5dp"
+                    android:gravity="center|start|center_horizontal|left|center_vertical"
+                    android:text="@{@string/items(UtilKt.getCheckedText(shoppingCard.itemList))}"
+                    android:textSize="18sp"
+                    android:layout_marginLeft="25dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_peoples" />
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_item_count">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:scrollbars="vertical">
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_item_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            />
+
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
