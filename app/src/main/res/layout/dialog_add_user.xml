@@ -43,7 +43,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:gravity="center|start|left|center_vertical"
-                    android:text="@string/add_list"
+                    android:text="@string/add_user"
                     android:textColor="@color/sho_green"
                     android:textSize="22sp"
                     android:textStyle="bold"
@@ -58,7 +58,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:hint="@string/add_list_name"
+                    android:hint="@string/username"
                     app:errorEnabled="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -74,98 +74,7 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/tv_set_color"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center|start|left|center_vertical"
-                    android:text="@string/set_color"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
 
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/ll_blue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginRight="20dp"
-                        android:gravity="center"
-                        >
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:padding="4dp"
-                            android:src="@drawable/ovalblueshape" />
-                        <TextView
-                            android:id="@+id/tv_blue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/card_bg1"
-                            android:text="Blue"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_green"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginRight="20dp"
-                        android:gravity="center"
-                        >
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-
-                            android:padding="4dp"
-                            android:src="@drawable/ovalgreenshape" />
-                        <TextView
-                            android:id="@+id/tv_green"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/sho_gray"
-                            android:text="Green"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/ll_orange"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginRight="20dp"
-                        android:gravity="center"
-                        >
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:padding="4dp"
-                            android:src="@drawable/ovalorangeshape" />
-                        <TextView
-                            android:id="@+id/tv_orange"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/sho_gray"
-                            android:text="Orange"/>
-                    </LinearLayout>
-
-
-
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -183,7 +92,7 @@
                         android:layout_marginRight="20dp"
                         android:fontFamily="sans-serif-light"
                         android:minWidth="125dp"
-                        android:text="@string/create"
+                        android:text="@string/add"
                         android:textAllCaps="false"
                         android:textSize="16dp"
                         android:textStyle="bold"

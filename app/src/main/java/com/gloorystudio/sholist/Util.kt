@@ -39,3 +39,8 @@ fun ArrayList<Item>.getCheckedText():String{
 
     return "${this.getCheckedCount()}/${this.size}"
 }
+fun getUsername(user:User):String{
+    if (user.status==1)return user.username
+    else if (user.status==2) return  "${user.username} (Waiting)"
+    else return  " "
+}

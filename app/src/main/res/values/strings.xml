@@ -39,7 +39,7 @@
     <string name="add_list">Create new list</string>
     <string name="cancel">Cancel</string>
     <string name="add">Add</string>
-    <string name="add_list_name">Add List Name</string>
+    <string name="add_list_name">List Name</string>
     <string name="set_color">Set color</string>
     <string name="set_user_data">Set User Information</string>
     <string name="change_password">Change my password.</string>
@@ -49,4 +49,9 @@
     <string name="select_item">Select item</string>
     <string name="set_icon">Set icon</string>
     <string name="set_count">Set count</string>
+    <string name="user_list">User List</string>
+    <string name="current_user">Current Users</string>
+    <string name="waiting">Waiting</string>
+    <string name="add_user">Add User</string>
+    <string name="create">Create</string>
 </resources>

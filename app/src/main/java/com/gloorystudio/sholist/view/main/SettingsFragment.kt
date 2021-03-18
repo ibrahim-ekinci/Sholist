@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.FragmentSettingsBinding
@@ -28,6 +29,10 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().window.statusBarColor= ContextCompat.getColor(requireContext(),R.color.green_dark)
+
+
     }
 
 

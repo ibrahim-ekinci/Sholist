@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.adapter.ShoppingListAdapter
 import com.gloorystudio.sholist.databinding.DialogAddItemBinding
@@ -40,6 +41,7 @@ class ListFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var shoppingCard: ShoppingCard?=null
@@ -51,9 +53,21 @@ class ListFragment : Fragment() {
         shoppingCard?.let {  shoppingCardData->
         val color = shoppingCardData.color
             when(color){ //Set Bg Color
-                1-> binding.clList.setBackgroundColor(ContextCompat.getColor(binding.clList.context,R.color.card_bg1))
-                2-> binding.clList.setBackgroundColor(ContextCompat.getColor(binding.clList.context,R.color.card_bg2))
-                3-> binding.clList.setBackgroundColor(ContextCompat.getColor(binding.clList.context,R.color.card_bg3))
+                1-> {
+                    val color=ContextCompat.getColor(binding.clList.context,R.color.card_bg1)
+                    binding.clList.setBackgroundColor(color)
+                    requireActivity().window.statusBarColor=color
+                }
+                2-> {
+                    val color=ContextCompat.getColor(binding.clList.context,R.color.card_bg2)
+                    binding.clList.setBackgroundColor(color)
+                    requireActivity().window.statusBarColor=color
+                }
+                3->{
+                    val color=ContextCompat.getColor(binding.clList.context,R.color.card_bg3)
+                    binding.clList.setBackgroundColor(color)
+                    requireActivity().window.statusBarColor=color
+                }
             }
             binding.floatingActionButton.setOnClickListener {
                 //Todo: show add item dialog
@@ -68,6 +82,9 @@ class ListFragment : Fragment() {
 
 
                 dialog.show()
+            }
+            binding.ivPeoples.setOnClickListener {
+                ListFragmentDirections.actionListFragmentToUserListFragment(shoppingCardData).Go(it)
             }
 
 

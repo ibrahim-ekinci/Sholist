@@ -50,6 +50,11 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        requireActivity().window.statusBarColor=ContextCompat.getColor(requireContext(),R.color.green_dark)
+
+
+
         binding.topAppBar.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.menu_item_info->{
@@ -98,10 +103,10 @@ class MainFragment : Fragment() {
         itemList.clear()
         sList.clear()
 
-        userList.add(User("1","Halil İbrahim","Ekinci","ibrahim","1"))
-        userList.add(User("2","Yunus Emre","Bulut","yunusemre","2"))
-        userList.add(User("3","Hilal","Tokgöz","hilal","3"))
-        userList.add(User("4","Recep","Yeşilkaya","recep","4"))
+        userList.add(User("1","Halil İbrahim","Ekinci","ibrahim","1",1))
+        userList.add(User("2","Yunus Emre","Bulut","yunusemre","2",1))
+        userList.add(User("3","Hilal","Tokgöz","hilal","3",2))
+        userList.add(User("4","Recep","Yeşilkaya","recep","4",2))
 
         itemList.add(Item("1","Ekmek",2,1,true,R.drawable.ic_jam))
         itemList.add(Item("2","Elma",3,1,true,R.drawable.ic_jam))

@@ -9,5 +9,6 @@ data class User(
     val name:String,
     val surname:String,
     val username:String,
-    val deviceId:String
+    val deviceId:String,
+    val status:Int
 ): Parcelable
