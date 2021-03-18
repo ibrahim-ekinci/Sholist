@@ -54,4 +54,11 @@
     <string name="waiting">Waiting</string>
     <string name="add_user">Add User</string>
     <string name="create">Create</string>
+    <string name="edit_list">Edit list</string>
+    <string name="edit">Edit</string>
+    <string name="remove_list">Remove list</string>
+    <string name="user_list_">User list</string>
+    <string name="clear_all">Clear all list</string>
+    <string name="clear_purchases">Clear purchased items</string>
+    <string name="leave_list">Leave list</string>
 </resources>

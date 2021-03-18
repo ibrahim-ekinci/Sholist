@@ -70,6 +70,7 @@ class UserListFragment : Fragment() {
                 dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 dialog.show()
             }
+
         }
 
 

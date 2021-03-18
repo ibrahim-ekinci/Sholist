@@ -15,11 +15,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/card_bg1">
+
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                style="@style/Widget.MaterialComponents.Toolbar.Surface"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+
+                app:menu="@menu/list_menu" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/shapeableImageView"
@@ -66,6 +90,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_edit"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="right"

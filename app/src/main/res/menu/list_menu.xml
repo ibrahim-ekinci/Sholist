@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_item_edit_list"
+        android:contentDescription="@string/content_description_info"
+        android:orderInCategory="10"
+        android:title="@string/edit_list" />
+    <item
+        android:id="@+id/menu_item_user_list"
+        android:contentDescription="@string/content_description_info"
+        android:orderInCategory="10"
+        android:title="@string/user_list_" />
+
+    <item
+        android:id="@+id/menu_item_clear"
+        android:contentDescription="@string/content_description_settings"
+        android:orderInCategory="10"
+        android:title="@string/clear_all" />
+    <item
+        android:id="@+id/menu_item_clear_purchases"
+        android:contentDescription="@string/content_description_settings"
+        android:orderInCategory="10"
+        android:title="@string/clear_purchases" />
+
+    <item
+        android:id="@+id/menu_item_remove"
+        android:contentDescription="@string/content_description_settings"
+        android:orderInCategory="10"
+        android:title="@string/remove_list" />
+    <item
+        android:id="@+id/menu_item_leave"
+        android:contentDescription="@string/content_description_settings"
+        android:orderInCategory="10"
+        android:title="@string/leave_list" />
+</menu>

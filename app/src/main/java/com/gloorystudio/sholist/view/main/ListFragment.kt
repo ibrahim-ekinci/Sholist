@@ -16,6 +16,7 @@ import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.adapter.ShoppingListAdapter
 import com.gloorystudio.sholist.databinding.DialogAddItemBinding
+import com.gloorystudio.sholist.databinding.DialogNewlistBinding
 import com.gloorystudio.sholist.databinding.FragmentListBinding
 import com.gloorystudio.sholist.model.Item
 import com.gloorystudio.sholist.model.ShoppingCard
@@ -56,16 +57,19 @@ class ListFragment : Fragment() {
                 1-> {
                     val color=ContextCompat.getColor(binding.clList.context,R.color.card_bg1)
                     binding.clList.setBackgroundColor(color)
+                    binding.topAppBar.setBackgroundColor(color)
                     requireActivity().window.statusBarColor=color
                 }
                 2-> {
                     val color=ContextCompat.getColor(binding.clList.context,R.color.card_bg2)
                     binding.clList.setBackgroundColor(color)
+                    binding.topAppBar.setBackgroundColor(color)
                     requireActivity().window.statusBarColor=color
                 }
                 3->{
                     val color=ContextCompat.getColor(binding.clList.context,R.color.card_bg3)
                     binding.clList.setBackgroundColor(color)
+                    binding.topAppBar.setBackgroundColor(color)
                     requireActivity().window.statusBarColor=color
                 }
             }
@@ -80,7 +84,15 @@ class ListFragment : Fragment() {
                 val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
                 (dialogBinding.textInputLayoutItem.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
-
+                dialog.show()
+            }
+            binding.ivEdit.setOnClickListener {
+                var dialog = Dialog(requireContext())
+                val dialogBinding = DialogNewlistBinding.inflate(LayoutInflater.from(requireContext()))
+                dialog.setContentView(dialogBinding.root)
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                dialogBinding.tvTitle.text=getString(R.string.edit_list)
+                dialogBinding.btnAdd.text=getString(R.string.edit)
                 dialog.show()
             }
             binding.ivPeoples.setOnClickListener {
