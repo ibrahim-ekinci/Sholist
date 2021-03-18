@@ -1,16 +1,20 @@
 package com.gloorystudio.sholist.view.main
 
+import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.adapter.ShoppingListAdapter
+import com.gloorystudio.sholist.databinding.DialogAddItemBinding
 import com.gloorystudio.sholist.databinding.FragmentListBinding
 import com.gloorystudio.sholist.model.Item
 import com.gloorystudio.sholist.model.ShoppingCard
@@ -51,6 +55,23 @@ class ListFragment : Fragment() {
                 2-> binding.clList.setBackgroundColor(ContextCompat.getColor(binding.clList.context,R.color.card_bg2))
                 3-> binding.clList.setBackgroundColor(ContextCompat.getColor(binding.clList.context,R.color.card_bg3))
             }
+            binding.floatingActionButton.setOnClickListener {
+                //Todo: show add item dialog
+
+                var dialog = Dialog(requireContext())
+                val dialogBinding = DialogAddItemBinding.inflate(LayoutInflater.from(requireContext()))
+                dialog.setContentView(dialogBinding.root)
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                val items = listOf("Material", "Design", "Components", "Android", "Design", "Components", "Android", "Design", "Components", "Android", "Design", "Components", "Android", "Design", "Components", "Android", "Design", "Components", "Android", "Design", "Components", "Android", "Design", "Components", "Android", "Design", "Components", "Android")
+                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
+                (dialogBinding.textInputLayoutItem.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+
+
+                dialog.show()
+            }
+
+
+
 
             viewModel = ViewModelProvider(this).get(ListViewModel :: class.java)
             viewModel.refreshItemListData(shoppingCardData.itemList)
