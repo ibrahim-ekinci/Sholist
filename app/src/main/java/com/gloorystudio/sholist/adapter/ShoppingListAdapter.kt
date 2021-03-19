@@ -3,21 +3,26 @@ package com.gloorystudio.sholist.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.ItemShoppingitemBinding
 import com.gloorystudio.sholist.model.Item
-import com.gloorystudio.sholist.model.ShoppingCard
 
 
 class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Adapter<ShoppingListAdapter.ShoppingListViewHolder>() {
 
     private var actionFragmentList: ((Item,CheckBox)->Unit)?= null
+    private var actionFragmentImageView: ((Item,ImageView)->Unit)?= null
 
     fun onClickCB(actionFragmentList:(Item,CheckBox)->Unit){
         this.actionFragmentList=actionFragmentList
     }
+    fun onClickIV(actionFragmentImageView:(Item,ImageView)->Unit){
+        this.actionFragmentImageView=actionFragmentImageView
+    }
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingListViewHolder {
@@ -26,7 +31,7 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
         return ShoppingListViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ShoppingListViewHolder, position: Int) =holder.bind(itemList[position],actionFragmentList)
+    override fun onBindViewHolder(holder: ShoppingListViewHolder, position: Int) =holder.bind(itemList[position],actionFragmentList,actionFragmentImageView)
 
 
     override fun getItemCount(): Int {
@@ -50,9 +55,13 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
             binding.cardItem.setOnClickListener {
                 binding.cbItem.performClick()
             }
+            binding.ivIcon.setOnClickListener {
+                actionFragmentImageView?.invoke(itemList[adapterPosition],binding.ivIcon)
+            }
+
 
         }
-        fun bind(item:Item,actionFragmentList:((Item,CheckBox)->Unit)?){
+        fun bind(item: Item, actionFragmentList: ((Item, CheckBox) -> Unit)?, actionFragmentImageView: ((Item, ImageView) -> Unit)?){
             binding.item=item
 
 
