@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "765314089048",
+    "project_id": "appsholist",
+    "storage_bucket": "appsholist.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765314089048:android:5194c33532a9bc47a58a2d",
+        "android_client_info": {
+          "package_name": "com.gloorystudio.sholist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765314089048-e3g4mu9osv6pk90k22g82j65lp4o8m1o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloorystudio.sholist",
+            "certificate_hash": "2ac9990ab11472a98a18c60ac68ef150ae289116"
+          }
+        },
+        {
+          "client_id": "765314089048-fp7s576m2pl9qa4dts56t3k2qbot0935.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJOAG-fCx2TpL2JqlFp2F-2SuynZ4FftI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "765314089048-fp7s576m2pl9qa4dts56t3k2qbot0935.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

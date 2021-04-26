@@ -41,7 +41,9 @@ class ListFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding= DataBindingUtil.inflate(inflater,R.layout.fragment_list,container,false)
+
         return binding.root
+
     }
 
 

@@ -11,9 +11,12 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
+import com.gloorystudio.sholist.adapter.InvitationAdapter
 import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
+import com.gloorystudio.sholist.databinding.DialogInvitationBinding
 import com.gloorystudio.sholist.databinding.DialogNewlistBinding
 import com.gloorystudio.sholist.databinding.FragmentMainBinding
+import com.gloorystudio.sholist.model.Invitation
 import com.gloorystudio.sholist.model.Item
 import com.gloorystudio.sholist.model.ShoppingCard
 import com.gloorystudio.sholist.model.User
@@ -63,6 +66,9 @@ class MainFragment : Fragment() {
                 R.id.menu_item_settings->{
                     MainFragmentDirections.actionMainFragmentToSettingsFragment().Go(binding.topAppBar)
                 }
+                R.id.menu_item_invitation->{
+                    ShowInvitations()
+                }
             }
             true
         }
@@ -103,10 +109,10 @@ class MainFragment : Fragment() {
         itemList.clear()
         sList.clear()
 
-        userList.add(User("1","Halil İbrahim","Ekinci","ibrahim","1",1))
-        userList.add(User("2","Yunus Emre","Bulut","yunusemre","2",1))
-        userList.add(User("3","Hilal","Tokgöz","hilal","3",2))
-        userList.add(User("4","Recep","Yeşilkaya","recep","4",2))
+        userList.add(User("1","asd@asd.com.tr",true,"Halil İbrahim","Ekinci","ibrahim","1",1))
+        userList.add(User("2","asd@asd.com.tr",true,"Yunus Emre","Bulut","yunusemre","2",1))
+        userList.add(User("3","asd@asd.com.tr",true,"Hilal","Tokgöz","hilal","3",2))
+        userList.add(User("4","asd@asd.com.tr",true,"Recep","Yeşilkaya","recep","4",2))
 
         itemList.add(Item("1","Ekmek",2,1,true,R.drawable.ic_jam))
         itemList.add(Item("2","Elma",3,1,true,R.drawable.ic_jam))
@@ -120,7 +126,7 @@ class MainFragment : Fragment() {
         itemList.add(Item("10","Kola",2,5,false,R.drawable.ic_jam))
 
 
-
+        
         sList.add(ShoppingCard("1","My Shoping List","1",1,userList,itemList))
         sList.add(ShoppingCard("2","My Shoping List1","1",1,userList,itemList))
         sList.add(ShoppingCard("3","My Shoping List2","1",2,userList,itemList))
@@ -138,12 +144,34 @@ class MainFragment : Fragment() {
         observeLiveData()
     }
 
+    private fun ShowInvitations() {
+        var dialog =Dialog(requireContext())
+        val dialogBinding = DialogInvitationBinding.inflate(LayoutInflater.from(requireContext()))
+
+        //TODO: DAVET LİSTELERİ ÇEKİLECEK.
+        var invitationList: ArrayList<Invitation> = ArrayList<Invitation>()
+        invitationList.add(Invitation("1","Alınacaklar","İbrahim","26.25.2020"))
+        invitationList.add(Invitation("2","Bim","Yunus Emre","26.25.2020"))
+        invitationList.add(Invitation("3","A-101","Recep","26.25.2020"))
+        invitationList.add(Invitation("4","Dükkan","Hilal","26.25.2020"))
+
+        val invitationAdapter=InvitationAdapter(invitationList)
+        dialogBinding.rvInvitation.layoutManager=LinearLayoutManager(requireContext())
+        dialogBinding.rvInvitation.adapter=invitationAdapter
+
+        dialog.setContentView(dialogBinding.root)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+
+    }
+
     private fun observeLiveData() {
         viewModel.ShoppingCards.observe(viewLifecycleOwner,{cards->
             cards?.let {
                 shoppingCardAdapter.updateShopingCard(it)
             }
         })
+
     }
 
 }
