@@ -3,14 +3,14 @@ package com.gloorystudio.sholist.view.main
 import android.app.Dialog
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gloorystudio.sholist.Go
-import com.gloorystudio.sholist.R
+import com.gloorystudio.sholist.*
 import com.gloorystudio.sholist.adapter.InvitationAdapter
 import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
 import com.gloorystudio.sholist.databinding.DialogInvitationBinding
@@ -27,9 +27,8 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModel :ShoppingCardViewModel
     private val shoppingCardAdapter=ShoppingCardAdapter(arrayListOf())
-    var sList: ArrayList<ShoppingCard> = ArrayList<ShoppingCard>()
-    var itemList: ArrayList<Item> = ArrayList<Item>()
-    var userList: ArrayList<User> = ArrayList<User>()
+    private val invitationAdapter=InvitationAdapter(arrayListOf())
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +45,7 @@ class MainFragment : Fragment() {
         binding= DataBindingUtil.inflate(inflater,R.layout.fragment_main,container,false)
         return binding.root
     }
+
 
 
 
@@ -105,43 +105,20 @@ class MainFragment : Fragment() {
             dialog.show()
         }
 
-        userList.clear()
-        itemList.clear()
-        sList.clear()
 
-        userList.add(User("1","asd@asd.com.tr",true,"Halil İbrahim","Ekinci","ibrahim","1",1))
-        userList.add(User("2","asd@asd.com.tr",true,"Yunus Emre","Bulut","yunusemre","2",1))
-        userList.add(User("3","asd@asd.com.tr",true,"Hilal","Tokgöz","hilal","3",2))
-        userList.add(User("4","asd@asd.com.tr",true,"Recep","Yeşilkaya","recep","4",2))
-
-        itemList.add(Item("1","Ekmek",2,1,true,R.drawable.ic_jam))
-        itemList.add(Item("2","Elma",3,1,true,R.drawable.ic_jam))
-        itemList.add(Item("3","Armut",1,2,true,R.drawable.ic_jam))
-        itemList.add(Item("4","Muz",1,2,true,R.drawable.ic_jam))
-        itemList.add(Item("5","Kivi",1,3,false,R.drawable.ic_jam))
-        itemList.add(Item("6","Cips",1,3,false,R.drawable.ic_jam))
-        itemList.add(Item("7","Kraker",1,4,false,R.drawable.ic_jam))
-        itemList.add(Item("8","Selpak",1,4,false,R.drawable.ic_jam))
-        itemList.add(Item("9","Su",2,5,false,R.drawable.ic_jam))
-        itemList.add(Item("10","Kola",2,5,false,R.drawable.ic_jam))
 
 
         
-        sList.add(ShoppingCard("1","My Shoping List","1",1,userList,itemList))
-        sList.add(ShoppingCard("2","My Shoping List1","1",1,userList,itemList))
-        sList.add(ShoppingCard("3","My Shoping List2","1",2,userList,itemList))
-        sList.add(ShoppingCard("4","My Shoping List3","1",3,userList,itemList))
-        sList.add(ShoppingCard("5","My Shoping List4","1",4,userList,itemList))
 
 
-        if(sList.isEmpty()) binding.llEmptyList.visibility=View.VISIBLE
-        else binding.llEmptyList.visibility=View.GONE
+
+
 
         viewModel = ViewModelProvider(this).get(ShoppingCardViewModel::class.java)
-        viewModel.refreshShoppingCardsData(sList)
+        viewModel.refreshShoppingCardsData()
         binding.rvShopingcards.layoutManager=LinearLayoutManager(requireContext())
         binding.rvShopingcards.adapter=shoppingCardAdapter
-        observeLiveData()
+        observeShppingCardsLiveData()
     }
 
     private fun ShowInvitations() {
@@ -149,15 +126,13 @@ class MainFragment : Fragment() {
         val dialogBinding = DialogInvitationBinding.inflate(LayoutInflater.from(requireContext()))
 
         //TODO: DAVET LİSTELERİ ÇEKİLECEK.
-        var invitationList: ArrayList<Invitation> = ArrayList<Invitation>()
-        invitationList.add(Invitation("1","Alınacaklar","İbrahim","26.25.2020"))
-        invitationList.add(Invitation("2","Bim","Yunus Emre","26.25.2020"))
-        invitationList.add(Invitation("3","A-101","Recep","26.25.2020"))
-        invitationList.add(Invitation("4","Dükkan","Hilal","26.25.2020"))
 
-        val invitationAdapter=InvitationAdapter(invitationList)
+
+
+        viewModel.refreshInvitationsData()
         dialogBinding.rvInvitation.layoutManager=LinearLayoutManager(requireContext())
         dialogBinding.rvInvitation.adapter=invitationAdapter
+        observeInvitationsLiveData(dialogBinding)
 
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -165,13 +140,47 @@ class MainFragment : Fragment() {
 
     }
 
-    private fun observeLiveData() {
+    private fun observeShppingCardsLiveData() {
         viewModel.ShoppingCards.observe(viewLifecycleOwner,{cards->
             cards?.let {
+
                 shoppingCardAdapter.updateShopingCard(it)
             }
         })
+        viewModel.ShoppingCardsIsEmpty.observe(viewLifecycleOwner,{isEmpty->
+            isEmpty?.let {
+                if(it) binding.llEmptyList.visibility=View.VISIBLE
+                else binding.llEmptyList.visibility=View.GONE
+            }
+        })
+        viewModel.ShoppingCardsError.observe(viewLifecycleOwner, { error ->
+            error?.let {
+                if (it) {
+                    //TODO: Eror yazdırılabilir.
+                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+        viewModel.ShoppingCardsLoading.observe(viewLifecycleOwner,{loading->
+            loading?.let {
+                if (loading) LoadingDialogShow(requireContext())
+                else LoadingDialogCancel()
+            }
+        })
 
+    }
+    private fun observeInvitationsLiveData(dialogBinding: DialogInvitationBinding){
+        viewModel.Invitations.observe(viewLifecycleOwner,{invitations->
+            invitations?.let {
+                invitationAdapter.updateInvitation(it)
+            }
+        })
+        viewModel.InvitationsIsEmpty.observe(viewLifecycleOwner,{isEmpty->
+            isEmpty?.let {
+                if (isEmpty)dialogBinding.tvIsempty.visibility =  View.VISIBLE
+                else dialogBinding.tvIsempty.visibility=View.GONE
+            }
+        })
     }
 
 }

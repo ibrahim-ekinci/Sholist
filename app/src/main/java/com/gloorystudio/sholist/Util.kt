@@ -1,5 +1,7 @@
 package com.gloorystudio.sholist
 
+import android.app.Dialog
+import android.content.Context
 import android.view.View
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
@@ -43,4 +45,22 @@ fun getUsername(user:User):String{
     if (user.status==1)return user.username
     else if (user.status==2) return  "${user.username} (Waiting)"
     else return  " "
+}
+
+private var loadingDialog: Dialog? = null
+fun LoadingDialogShow(context: Context) {
+    context?.let { c ->
+        loadingDialog = Dialog(c)
+        loadingDialog?.let { dialog ->
+            dialog.setContentView(R.layout.dialog_loading)
+            dialog.setCancelable(false)
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
+    }
+
+}
+
+fun LoadingDialogCancel() {
+    loadingDialog?.let { dialog -> dialog.cancel() }
 }
