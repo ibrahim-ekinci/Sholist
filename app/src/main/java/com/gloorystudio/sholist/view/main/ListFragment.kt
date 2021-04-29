@@ -107,6 +107,7 @@ class ListFragment : Fragment() {
 
 
             viewModel = ViewModelProvider(this).get(ListViewModel :: class.java)
+
             viewModel.refreshItemListData(shoppingCardData.itemList)
             binding.rvItemList.layoutManager=LinearLayoutManager(requireContext())
             binding.rvItemList.adapter=shoppinglistAdapter

@@ -29,10 +29,10 @@ class ShoppingCardViewModel:ViewModel() {
         itemList.clear()
         sList.clear()
 
-        userList.add(User("1","asd@asd.com.tr",true,"Halil İbrahim","Ekinci","ibrahim","1",1))
-        userList.add(User("2","asd@asd.com.tr",true,"Yunus Emre","Bulut","yunusemre","2",1))
-        userList.add(User("3","asd@asd.com.tr",true,"Hilal","Tokgöz","hilal","3",2))
-        userList.add(User("4","asd@asd.com.tr",true,"Recep","Yeşilkaya","recep","4",2))
+        userList.add(User("1","asd@asd.com.tr",true,"Halil İbrahim Ekinci","ibrahim","1",1))
+        userList.add(User("2","asd@asd.com.tr",true,"Yunus Emre Bulut","yunusemre","2",1))
+        userList.add(User("3","asd@asd.com.tr",true,"Hilal Tokgöz","hilal","3",2))
+        userList.add(User("4","asd@asd.com.tr",true,"Recep Yeşikaya","recep","4",2))
 
         itemList.add(Item("1","Ekmek",2,1,true, R.drawable.ic_jam))
         itemList.add(Item("2","Elma",3,1,true, R.drawable.ic_jam))
