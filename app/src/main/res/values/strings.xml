@@ -63,4 +63,5 @@
     <string name="leave_list">Leave list</string>
     <string name="group_invites_list">Group invites list</string>
     <string name="there_is_no_invitation">There is no invitation.</string>
+    <string name="google_login">Sign in</string>
 </resources>

@@ -34,16 +34,16 @@ class ShoppingCardViewModel:ViewModel() {
         userList.add(User("3","asd@asd.com.tr",true,"Hilal Tokgöz","hilal","3",2))
         userList.add(User("4","asd@asd.com.tr",true,"Recep Yeşikaya","recep","4",2))
 
-        itemList.add(Item("1","Ekmek",2,1,true, R.drawable.ic_jam))
-        itemList.add(Item("2","Elma",3,1,true, R.drawable.ic_jam))
-        itemList.add(Item("3","Armut",1,2,true, R.drawable.ic_jam))
-        itemList.add(Item("4","Muz",1,2,true, R.drawable.ic_jam))
-        itemList.add(Item("5","Kivi",1,3,false, R.drawable.ic_jam))
-        itemList.add(Item("6","Cips",1,3,false, R.drawable.ic_jam))
-        itemList.add(Item("7","Kraker",1,4,false, R.drawable.ic_jam))
-        itemList.add(Item("8","Selpak",1,4,false, R.drawable.ic_jam))
-        itemList.add(Item("9","Su",2,5,false, R.drawable.ic_jam))
-        itemList.add(Item("10","Kola",2,5,false, R.drawable.ic_jam))
+        itemList.add(Item("1","Ekmek",2,true, R.drawable.ic_jam))
+        itemList.add(Item("2","Elma",3,true, R.drawable.ic_jam))
+        itemList.add(Item("3","Armut",1,true, R.drawable.ic_jam))
+        itemList.add(Item("4","Muz",1,true, R.drawable.ic_jam))
+        itemList.add(Item("5","Kivi",1,false, R.drawable.ic_jam))
+        itemList.add(Item("6","Cips",1,false, R.drawable.ic_jam))
+        itemList.add(Item("7","Kraker",1,false, R.drawable.ic_jam))
+        itemList.add(Item("8","Selpak",1,false, R.drawable.ic_jam))
+        itemList.add(Item("9","Su",2,false, R.drawable.ic_jam))
+        itemList.add(Item("10","Kola",2,false, R.drawable.ic_jam))
 
         sList.add(ShoppingCard("1","My Shoping List","1",1,userList,itemList))
         sList.add(ShoppingCard("2","My Shoping List1","1",1,userList,itemList))
@@ -59,10 +59,10 @@ class ShoppingCardViewModel:ViewModel() {
 
     fun refreshInvitationsData(){
         var invitationList: ArrayList<Invitation> = ArrayList<Invitation>()
-        invitationList.add(Invitation("1","Alınacaklar","İbrahim","26.25.2020"))
-        invitationList.add(Invitation("2","Bim","Yunus Emre","26.25.2020"))
-        invitationList.add(Invitation("3","A-101","Recep","26.25.2020"))
-        invitationList.add(Invitation("4","Dükkan","Hilal","26.25.2020"))
+        invitationList.add(Invitation("1","","Alınacaklar","İbrahim","26.25.2020"))
+        invitationList.add(Invitation("2","","Bim","Yunus Emre","26.25.2020"))
+        invitationList.add(Invitation("3","","A-101","Recep","26.25.2020"))
+        invitationList.add(Invitation("4","","Dükkan","Hilal","26.25.2020"))
 
         Invitations.value=invitationList
         InvitationsIsEmpty.value=invitationList.isEmpty()
