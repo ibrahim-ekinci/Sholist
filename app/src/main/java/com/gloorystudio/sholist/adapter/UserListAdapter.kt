@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.ItemUserBinding
+import com.gloorystudio.sholist.getUserNames
 import com.gloorystudio.sholist.getUsername
 
 
@@ -37,6 +38,8 @@ class UserListAdapter(private val userList :ArrayList<User> ):RecyclerView.Adapt
     fun updateUser(it : List<User>){
         userList.clear()
         userList.addAll(it)
+        val userl :ArrayList<User>
+
         notifyDataSetChanged()
     }
 
@@ -53,11 +56,11 @@ class UserListAdapter(private val userList :ArrayList<User> ):RecyclerView.Adapt
             binding.user= user
             val context = binding.cardItem.context
             when(user.status){
-                1->{
+                true->{
                     binding.ivIcon.setImageResource(R.drawable.ic_baseline_person_remove_24)
                     binding.ivIcon.setColorFilter(ContextCompat.getColor(context,R.color.red))
                 }
-                2 -> {
+                false -> {
 
                     binding.ivIcon.setImageResource(R.drawable.ic_baseline_replay_24)
                     binding.ivIcon.setColorFilter(ContextCompat.getColor(context, R.color.sho_gray))

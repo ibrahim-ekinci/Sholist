@@ -23,6 +23,7 @@ fun ArrayList<Item>.getCheckedCount():Int{
     }
     return counter
 }
+
 fun ArrayList<User>.getUserNames():String{
     var names=""
     this?.let {
@@ -42,8 +43,8 @@ fun ArrayList<Item>.getCheckedText():String{
     return "${this.getCheckedCount()}/${this.size}"
 }
 fun getUsername(user:User):String{
-    if (user.status==1)return user.username
-    else if (user.status==2) return  "${user.username} (Waiting)"
+    if (user.status==true)return user.username
+    else if (user.status==false) return  "${user.username} (Waiting)"
     else return  " "
 }
 

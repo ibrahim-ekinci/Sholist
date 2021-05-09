@@ -19,5 +19,5 @@ data class User(
     @SerializedName("deviceId")
     val deviceId:String,
     @SerializedName("status")
-    val status:Int
+    val status:Boolean
 ): Parcelable
