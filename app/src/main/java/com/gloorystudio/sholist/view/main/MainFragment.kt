@@ -16,19 +16,15 @@ import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
 import com.gloorystudio.sholist.databinding.DialogInvitationBinding
 import com.gloorystudio.sholist.databinding.DialogNewlistBinding
 import com.gloorystudio.sholist.databinding.FragmentMainBinding
-import com.gloorystudio.sholist.model.Invitation
-import com.gloorystudio.sholist.model.Item
-import com.gloorystudio.sholist.model.ShoppingCard
-import com.gloorystudio.sholist.model.User
-import com.gloorystudio.sholist.viewmodel.ShoppingCardViewModel
+import com.gloorystudio.sholist.viewmodel.main.ShoppingCardViewModel
 
 
 class MainFragment : Fragment() {
 
-    private lateinit var viewModel :ShoppingCardViewModel
+    private lateinit var viewModel : ShoppingCardViewModel
     private val shoppingCardAdapter=ShoppingCardAdapter(arrayListOf())
     private val invitationAdapter=InvitationAdapter(arrayListOf())
-
+    private lateinit var dialogBinding: DialogInvitationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +52,23 @@ class MainFragment : Fragment() {
 
         requireActivity().window.statusBarColor=ContextCompat.getColor(requireContext(),R.color.green_dark)
 
+        //TODO: DAVET LİSTELERİ ÇEKİLECEK.
 
+
+        viewModel = ViewModelProvider(this).get(ShoppingCardViewModel::class.java)
+
+        //For Dialog
+        dialogBinding = DialogInvitationBinding.inflate(LayoutInflater.from(requireContext()))
+        viewModel.refreshInvitationsData()
+        dialogBinding.rvInvitation.layoutManager=LinearLayoutManager(requireContext())
+        dialogBinding.rvInvitation.adapter=invitationAdapter
+        observeInvitationsLiveData(dialogBinding)
+
+        //For ShoppingCardList
+        viewModel.refreshShoppingCardsData()
+        binding.rvShopingcards.layoutManager=LinearLayoutManager(requireContext())
+        binding.rvShopingcards.adapter=shoppingCardAdapter
+        observeShoppingCardsLiveData()
 
         binding.topAppBar.setOnMenuItemClickListener {
             when(it.itemId){
@@ -105,34 +117,11 @@ class MainFragment : Fragment() {
             dialog.show()
         }
 
-
-
-
-        
-
-
-
-
-
-        viewModel = ViewModelProvider(this).get(ShoppingCardViewModel::class.java)
-        viewModel.refreshShoppingCardsData()
-        binding.rvShopingcards.layoutManager=LinearLayoutManager(requireContext())
-        binding.rvShopingcards.adapter=shoppingCardAdapter
-        observeShppingCardsLiveData()
     }
 
     private fun ShowInvitations() {
         var dialog =Dialog(requireContext())
-        val dialogBinding = DialogInvitationBinding.inflate(LayoutInflater.from(requireContext()))
 
-        //TODO: DAVET LİSTELERİ ÇEKİLECEK.
-
-
-
-        viewModel.refreshInvitationsData()
-        dialogBinding.rvInvitation.layoutManager=LinearLayoutManager(requireContext())
-        dialogBinding.rvInvitation.adapter=invitationAdapter
-        observeInvitationsLiveData(dialogBinding)
 
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -140,7 +129,7 @@ class MainFragment : Fragment() {
 
     }
 
-    private fun observeShppingCardsLiveData() {
+    private fun observeShoppingCardsLiveData() {
         viewModel.ShoppingCards.observe(viewLifecycleOwner,{cards->
             cards?.let {
 
@@ -177,8 +166,14 @@ class MainFragment : Fragment() {
         })
         viewModel.InvitationsIsEmpty.observe(viewLifecycleOwner,{isEmpty->
             isEmpty?.let {
-                if (isEmpty)dialogBinding.tvIsempty.visibility =  View.VISIBLE
-                else dialogBinding.tvIsempty.visibility=View.GONE
+                if (isEmpty){
+                    dialogBinding.tvIsempty.visibility =  View.VISIBLE
+                    binding.topAppBar.menu.findItem(R.id.menu_item_invitation).setVisible(false)
+                }
+                else{
+                    dialogBinding.tvIsempty.visibility=View.GONE
+                    binding.topAppBar.menu.findItem(R.id.menu_item_invitation).setVisible(true)
+                }
             }
         })
     }

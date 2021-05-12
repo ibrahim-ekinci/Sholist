@@ -22,12 +22,12 @@ import com.gloorystudio.sholist.databinding.DialogSetIconBinding
 import com.gloorystudio.sholist.databinding.FragmentListBinding
 import com.gloorystudio.sholist.model.Item
 import com.gloorystudio.sholist.model.ShoppingCard
-import com.gloorystudio.sholist.viewmodel.ListViewModel
+import com.gloorystudio.sholist.viewmodel.main.ListViewModel
 
 
 class ListFragment : Fragment() {
 
-    private lateinit var viewModel :ListViewModel
+    private lateinit var viewModel : ListViewModel
     private val shoppinglistAdapter=ShoppingListAdapter(arrayListOf())
     var itemList: ArrayList<Item> = ArrayList<Item>()
 

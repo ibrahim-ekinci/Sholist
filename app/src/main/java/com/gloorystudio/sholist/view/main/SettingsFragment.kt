@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.FragmentSettingsBinding
+import com.gloorystudio.sholist.viewmodel.login.LoginViewModel
+import com.gloorystudio.sholist.viewmodel.main.SettingsViewModel
 
 
 class SettingsFragment : Fragment() {
@@ -18,6 +21,8 @@ class SettingsFragment : Fragment() {
 
     }
     private lateinit var  binding : FragmentSettingsBinding
+    private lateinit var viewModel : SettingsViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,6 +37,7 @@ class SettingsFragment : Fragment() {
 
         requireActivity().window.statusBarColor= ContextCompat.getColor(requireContext(),R.color.green_dark)
 
+        viewModel= ViewModelProvider(this).get(SettingsViewModel ::class.java)
 
     }
 

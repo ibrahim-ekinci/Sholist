@@ -17,7 +17,7 @@ import com.gloorystudio.sholist.databinding.FragmentUserListBinding
 import com.gloorystudio.sholist.model.ShoppingCard
 import com.gloorystudio.sholist.model.User
 
-import com.gloorystudio.sholist.viewmodel.UserListViewModel
+import com.gloorystudio.sholist.viewmodel.main.UserListViewModel
 
 
 class UserListFragment : Fragment() {
