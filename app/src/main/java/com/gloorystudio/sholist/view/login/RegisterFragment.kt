@@ -28,9 +28,13 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnRegister.setOnClickListener {
-            RegisterFragmentDirections.actionRegisterFragmentToUserInfoFragment("name").Go(it)
-        }
         viewModel= ViewModelProvider(this).get( RegisterViewModel::class.java)
+        binding.btnRegister.setOnClickListener {btn->
+            //Todo Remove Navigate
+            RegisterFragmentDirections.actionRegisterFragmentToUserInfoFragment("name","123","test@test.com").Go(btn)
+
+            viewModel.signUp(requireContext(),binding.etRegisterEmail.text.toString(),binding.etRegisterPassword.text.toString())
+        }
+
     }
 }

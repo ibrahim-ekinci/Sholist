@@ -47,7 +47,6 @@ fun getUsername(user:User):String{
     else if (user.status==false) return  "${user.username} (Waiting)"
     else return  " "
 }
-
 private var loadingDialog: Dialog? = null
 fun LoadingDialogShow(context: Context) {
     context?.let { c ->

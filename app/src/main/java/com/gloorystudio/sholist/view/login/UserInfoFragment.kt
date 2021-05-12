@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
+import com.gloorystudio.sholist.data.api.model.auth.SetNames
 import com.gloorystudio.sholist.databinding.FragmentUserInfoBinding
 import com.gloorystudio.sholist.viewmodel.login.UserInfoViewModel
 
@@ -28,10 +29,30 @@ class UserInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnUnRegister.setOnClickListener {
-            UserInfoFragmentDirections.actionUserInfoFragmentToVerificationFragment().Go(it)
-        }
         viewModel = ViewModelProvider(this).get(UserInfoViewModel::class.java)
+        var name = ""
+        var email = ""
+        var tempToken = ""
+        arguments?.let {
+            val myArgs = UserInfoFragmentArgs.fromBundle(it)
+            name = myArgs.name
+            email = myArgs.email
+            tempToken = myArgs.tempToken
+        }
+        binding.etUnName.setText(name)
+
+        binding.btnUnRegister.setOnClickListener {
+            //todo:Remove navigate
+            UserInfoFragmentDirections.actionUserInfoFragmentToVerificationFragment(email).Go(it)
+
+            viewModel.setName(requireContext(), SetNames(
+                email,
+                tempToken,
+                binding.etUnUsername.text.toString(),
+                binding.etUnName.text.toString()
+            ))
+        }
+
     }
 
 }

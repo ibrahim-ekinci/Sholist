@@ -52,9 +52,12 @@ class LoginFragment : Fragment() {
             LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment().Go(it)
         }
         binding.btnLogin.setOnClickListener {
+            //TODO:REMOVE navigation
             val intent = Intent(requireContext(),MainActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
+
+            viewModel.loginWithEmailAndPass(requireContext(),binding.etLoginEmail.text.toString(),binding.etLoginPasword.text.toString())
         }
 
 
@@ -89,7 +92,7 @@ class LoginFragment : Fragment() {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-               viewModel.firebaseAuthWithGoogle(account.idToken!!,requireActivity())
+               viewModel.loginWithGoogle(account.idToken!!,requireActivity())
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)

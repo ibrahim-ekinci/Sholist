@@ -64,4 +64,6 @@
     <string name="group_invites_list">Group invites list</string>
     <string name="there_is_no_invitation">There is no invitation.</string>
     <string name="google_login">Sign in</string>
+    <string name="login_failed">Login failed.</string>
+    <string name="mail_hass_been_sent">Mail has been sent. Please check your email.</string>
 </resources>

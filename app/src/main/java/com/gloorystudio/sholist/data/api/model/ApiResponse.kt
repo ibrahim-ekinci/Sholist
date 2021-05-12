@@ -3,51 +3,79 @@ package com.gloorystudio.sholist.data.api.model.response
 import com.gloorystudio.sholist.model.Invitation
 import com.gloorystudio.sholist.model.Item
 import com.gloorystudio.sholist.model.ShoppingCard
+import com.gloorystudio.sholist.model.User
 
 
-interface  IApiResponse{
-    val message: String?
+interface IApiResponse {
     val state: String
+    val message: String?
+    val code: Int?
 }
 
 data class ApiResponse(
+    override val state: String,
     override val message: String?,
-    override val state: String
-):IApiResponse
+    override val code: Int?
+) : IApiResponse
 
 data class ApiResponseWithJwt(
-    override val message: String?,
     override val state: String,
-    val jwt:String
-):IApiResponse
-
+    override val message: String?,
+    override val code: Int?,
+    val member:User?,
+    val jwt: String?,
+    val tempToken:String?
+) : IApiResponse
+data class ApiResponseWithTt(
+    override val state: String,
+    override val message: String?,
+    override val code: Int?,
+    val tempToken:String?
+) : IApiResponse
+data class ApiResponseWithJwtAndTt(
+    override val state: String,
+    override val message: String?,
+    override val code: Int?,
+    val member:User?,
+    val registered:Boolean,
+    val jwt: String?,
+    val tempToken:String?
+) : IApiResponse
 data class ApiResponseWithShoppingCard(
-    override val message: String?,
+
     override val state: String,
+    override val message: String?,
+    override val code: Int?,
     val shoppingCard: ShoppingCard
-):IApiResponse
+) : IApiResponse
 
 data class ApiResponseWithShoppingCardList(
-    override val message: String?,
     override val state: String,
+    override val message: String?,
+    override val code: Int?,
     val shoppingCard: List<ShoppingCard>
-):IApiResponse
+) : IApiResponse
 
 data class ApiResponseWithShoppingCardAndItemList(
-    override val message: String?,
+
     override val state: String,
+    override val message: String?,
+    override val code: Int?,
     val shoppingCard: ShoppingCard,
-    val itemList:List<Item>
-):IApiResponse
+
+    val itemList: List<Item>
+) : IApiResponse
 
 data class ApiResponseWithItem(
-    override val message: String?,
     override val state: String,
-    val item:Item
-):IApiResponse
+    override val message: String?,
+    override val code: Int?,
+    val item: Item
+) : IApiResponse
 
 data class ApiResponseWithInvitation(
-    override val message: String,
     override val state: String,
-    val requests:List<Invitation>
-):IApiResponse
+    override val message: String,
+    override val code: Int?,
+    val requests: List<Invitation>
+) : IApiResponse

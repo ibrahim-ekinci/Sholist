@@ -13,20 +13,22 @@ import com.gloorystudio.sholist.data.api.model.shoppingcard.GetShoppingCard
 import com.gloorystudio.sholist.data.api.model.shoppingcard.PostShoppingCard
 import io.reactivex.Single
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
 class SholistApiService {
 
-    private val BASE_URL = "www.sholist.com/api/"
+    private val BASE_URL = "https://www.sholist.com/api/"
     private val api = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build()
         .create(SholistApi::class.java)
 
 
-    fun signUp(signUp: SignUp): Single<ApiResponse> {
+    fun signUp(signUp: SignUp): Single<ApiResponseWithTt> {
         return api.signUp(signUp)
     }
 
@@ -36,6 +38,9 @@ class SholistApiService {
 
     fun signIn(signIn: SignIn): Single<ApiResponseWithJwt> {
         return api.signIn(signIn)
+    }
+    fun loginWithGoogle(loginWithGoogle: LoginWithGoogle): Single<ApiResponseWithJwtAndTt> {
+        return api.loginWithGoogle(loginWithGoogle)
     }
 
     fun verifyEmail(email: String): Single<ApiResponse> {

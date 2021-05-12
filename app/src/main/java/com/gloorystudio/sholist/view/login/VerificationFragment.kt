@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.gloorystudio.sholist.Go
+import com.gloorystudio.sholist.LoadingDialogShow
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.FragmentVerificationBinding
 import com.gloorystudio.sholist.viewmodel.login.VerificationViewModel
@@ -28,8 +30,25 @@ class VerificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel= ViewModelProvider(this).get(VerificationViewModel ::class.java)
+        var email=""
+        arguments?.let {
+            val myArgs = VerificationFragmentArgs.fromBundle(it)
+            email=myArgs.email
+        }
+        sendMail(email)
+
+        binding.llSendMail.setOnClickListener {
+            sendMail(email)
+            LoadingDialogShow(requireContext())
+        }
+        binding.btnLogin.setOnClickListener {
+            VerificationFragmentDirections.actionVerificationFragmentToLoginFragment().Go(it)
+        }
+    }
+
+    private fun sendMail(email:String) {
+        viewModel.sendMail(requireContext(),email)
     }
 
 }

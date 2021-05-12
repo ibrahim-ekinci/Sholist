@@ -21,7 +21,7 @@ interface SholistApi {
 
     //Kayıt Ol
     @POST("signUp")
-    fun signUp(@Body signUp: SignUp): Single<ApiResponse>
+    fun signUp(@Body signUp: SignUp): Single<ApiResponseWithTt>
 
     //Benzersiz Kullanıcı Adı Belirle
     @POST("setNames")
@@ -32,14 +32,21 @@ interface SholistApi {
     fun signIn(@Body signIn: SignIn): Single<ApiResponseWithJwt>
 
     //E-posta Onayı İçin Eposta Gönder
+    @FormUrlEncoded
     @POST("verifyEmail")
     fun verifyEmail(@Field("email") email: String): Single<ApiResponse>
 
     //Çıkış Yap
+    @FormUrlEncoded
     @POST("signOut")
     fun signOut(@Field("jwt") jwt: String): Single<ApiResponse>
 
+    //Google ile Giriş
+    @POST("loginViaGoogle")
+    fun loginWithGoogle(@Body loginWithGoogle: LoginWithGoogle):Single<ApiResponseWithJwtAndTt>
+
     //Parolamı Unuttum - Kurtarma E-postası İste
+    @FormUrlEncoded
     @POST("forgotMyPassword")
     fun forgotMyPassword(@Field("email") email: String): Single<ApiResponse>
 
@@ -51,6 +58,7 @@ interface SholistApi {
     fun getShoppingCard(@Body getShoppingCard: GetShoppingCard): Single<ApiResponseWithShoppingCard>
 
     //Sahibi Olunan Bütün Alışveriş Listesilerini Getir
+    @FormUrlEncoded
     @GET("shoppingCardAll")
     fun getShoppingCardAll(@Field("jwt") jwt: String): Single<ApiResponseWithShoppingCardList>
 
@@ -75,6 +83,7 @@ interface SholistApi {
     fun patchItem(@Body patchItem: PatchItem): Single<ApiResponseWithItem>
 
     //Alışveriş Listesine Eklenmek İçin Gönderilmiş İstekleri Görüntüleme
+    @FormUrlEncoded
     @GET("invitation")
     fun getInvitation(@Field("jwt") jwt: String): Single<ApiResponseWithInvitation>
 

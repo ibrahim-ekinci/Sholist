@@ -28,8 +28,13 @@ class ForgetPasswordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel= ViewModelProvider(this).get(ForgetPasswordViewModel ::class.java)
+
+        binding.btnForgetPw.setOnClickListener {
+            viewModel.sendMail(requireContext(),binding.etForgetEmail.text.toString())
+        }
+
+
     }
 
 }
