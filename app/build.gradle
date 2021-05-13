@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-android-extensions'
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
+    id 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 }
 
 android {
@@ -65,6 +66,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
+    implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
+
     implementation "com.android.support:palette-v7:$supportVersion"
     implementation "com.android.support:design:$supportVersion"
 
@@ -101,6 +104,8 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifeCycleExtensionVersion"
 
     implementation "androidx.preference:preference-ktx:$preferencesVersion"
+
+
 
 
 }

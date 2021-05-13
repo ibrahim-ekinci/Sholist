@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.onesignal.OneSignal
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -33,6 +34,7 @@ class LoginViewModel : ViewModel() {
     private lateinit var auth: FirebaseAuth
     private val apiService = SholistApiService()
     private val disposable = CompositeDisposable()
+    private val ONESIGNAL_APP_ID = "b2dc0337-71df-4412-aaf7-44a39c58104e"
 
     fun initialAuth() {
         auth = Firebase.auth
@@ -65,7 +67,7 @@ class LoginViewModel : ViewModel() {
         LoadingDialogShow(activity)
 
         disposable.add(
-            apiService.loginWithGoogle(LoginWithGoogle(getDeviceId(),user!!.email,getStaticToken()))
+            apiService.loginWithGoogle(LoginWithGoogle(getDeviceId(activity),user!!.email,getStaticToken()))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object :DisposableSingleObserver<ApiResponseWithJwtAndTt>(){
@@ -93,9 +95,8 @@ class LoginViewModel : ViewModel() {
 
     fun loginWithEmailAndPass(context: Context, email: String, password: String) {
         LoadingDialogShow(context)
-
         disposable.add(
-            apiService.signIn(SignIn(getDeviceId(), email, password))
+            apiService.signIn(SignIn(getDeviceId(context), email, password))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<ApiResponseWithJwt>() {
@@ -130,8 +131,14 @@ class LoginViewModel : ViewModel() {
 
 
     }
-    private fun getDeviceId():String{
-        return ""//TODO RETURN DEVİCE ID
+    private fun getDeviceId(context: Context):String?{
+        OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE)
+
+        //OneSignal Initialization
+        OneSignal.initWithContext(context)
+        OneSignal.setAppId(ONESIGNAL_APP_ID)
+
+        return OneSignal.getDeviceState()?.userId
     }
     private fun getStaticToken():String{
         return ""//TODO: RETURNT STATİCID
