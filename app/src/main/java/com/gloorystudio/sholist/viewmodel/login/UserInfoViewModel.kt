@@ -2,6 +2,7 @@ package com.gloorystudio.sholist.viewmodel.login
 
 import android.content.Context
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gloorystudio.sholist.LoadingDialogCancel
 import com.gloorystudio.sholist.LoadingDialogShow
@@ -14,6 +15,8 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 
 class UserInfoViewModel : ViewModel() {
+    val usernameError = MutableLiveData<Boolean>()
+
     private val apiService = SholistApiService()
     private val disposable = CompositeDisposable()
 
@@ -27,6 +30,7 @@ class UserInfoViewModel : ViewModel() {
                 override fun onSuccess(t: ApiResponse) {
                     LoadingDialogCancel()
                     //Todo mail onaylamaya yönlendir
+                    //TODO: KULLANICI ADI MEVCUTSA UYAR usernameError
                 }
 
                 override fun onError(e: Throwable) {

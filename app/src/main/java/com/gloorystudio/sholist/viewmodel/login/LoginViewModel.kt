@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.gloorystudio.sholist.LoadingDialogCancel
 import com.gloorystudio.sholist.LoadingDialogShow
 import com.gloorystudio.sholist.R
@@ -14,6 +15,8 @@ import com.gloorystudio.sholist.data.api.model.auth.SignIn
 import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithJwt
 import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithJwtAndTt
 import com.gloorystudio.sholist.data.api.service.SholistApiService
+import com.gloorystudio.sholist.data.setJwt
+import com.gloorystudio.sholist.data.setUserData
 import com.gloorystudio.sholist.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -24,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     private lateinit var auth: FirebaseAuth
@@ -69,7 +73,7 @@ class LoginViewModel : ViewModel() {
                         LoadingDialogCancel()
 
                         if (response.registered){
-                            saveJwtAndUser(response.jwt,response.member)
+                            saveJwtAndUser(activity,response.jwt,response.member)
                             //TODO: MAİN FLOW A YÖNLENDİR.
                         }else{
                             //TODO:  kullanıcı isminin belirlenmemiş olduğunu belirtir
@@ -98,7 +102,7 @@ class LoginViewModel : ViewModel() {
                     override fun onSuccess(response: ApiResponseWithJwt) {
                         LoadingDialogCancel()
                         if (response.state == "succes") {
-                            saveJwtAndUser(response.jwt,response.member)
+                            saveJwtAndUser(context,response.jwt,response.member)
                             //TODO: MAİN FLOW A YÖNLENDİR.
                         }
                         else {
@@ -133,8 +137,14 @@ class LoginViewModel : ViewModel() {
         return ""//TODO: RETURNT STATİCID
     }
 
-    private fun saveJwtAndUser(jwt:String?,user: User?) {
-        //TODO:  Jwt yi kaydet ve yönlendir.
-
+    private fun saveJwtAndUser(context: Context,jwt:String?,user: User?) {
+        viewModelScope.launch {
+            jwt?.let { j->
+                setJwt(context, j)
+            }
+            user?.let { u->
+                setUserData(context,u)
+            }
+        }
     }
 }

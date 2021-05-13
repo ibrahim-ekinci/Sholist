@@ -9,15 +9,15 @@ data class User(
     @SerializedName("id")
     val id:String,
     @SerializedName("email")
-    val email:String,
+    val email:String?,
     @SerializedName("verification")
-    val verification:Boolean,
+    val verification:Boolean?,
     @SerializedName("name")
-    val name:String,
+    val name:String?,
     @SerializedName("username")
-    val username:String,
+    val username:String?,
     @SerializedName("deviceId")
-    val deviceId:String,
+    val deviceId:String?,
     @SerializedName("status")
-    val status:Boolean
+    val status:Boolean?
 ): Parcelable

@@ -95,6 +95,9 @@ dependencies {
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
+    // Preferences DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0-beta01"
+
     implementation "android.arch.lifecycle:extensions:$lifeCycleExtensionVersion"
 
     implementation "androidx.preference:preference-ktx:$preferencesVersion"
