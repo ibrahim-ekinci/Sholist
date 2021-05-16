@@ -17,7 +17,7 @@ import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithJwtAndTt
 import com.gloorystudio.sholist.data.api.service.SholistApiService
 import com.gloorystudio.sholist.data.setJwt
 import com.gloorystudio.sholist.data.setUserData
-import com.gloorystudio.sholist.model.User
+import com.gloorystudio.sholist.data.db.entity.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider

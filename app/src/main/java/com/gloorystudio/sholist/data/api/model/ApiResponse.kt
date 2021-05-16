@@ -1,9 +1,9 @@
 package com.gloorystudio.sholist.data.api.model.response
 
 import com.gloorystudio.sholist.model.Invitation
-import com.gloorystudio.sholist.model.Item
+import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.model.ShoppingCard
-import com.gloorystudio.sholist.model.User
+import com.gloorystudio.sholist.data.db.entity.User
 
 
 interface IApiResponse {
@@ -22,7 +22,7 @@ data class ApiResponseWithJwt(
     override val state: String,
     override val message: String?,
     override val code: Int?,
-    val member:User?,
+    val member: User?,
     val jwt: String?,
     val tempToken:String?
 ) : IApiResponse
@@ -36,7 +36,7 @@ data class ApiResponseWithJwtAndTt(
     override val state: String,
     override val message: String?,
     override val code: Int?,
-    val member:User?,
+    val member: User?,
     val registered:Boolean,
     val jwt: String?,
     val tempToken:String?

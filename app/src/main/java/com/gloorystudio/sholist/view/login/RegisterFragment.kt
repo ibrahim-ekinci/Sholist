@@ -43,6 +43,7 @@ class RegisterFragment : Fragment() {
                 ).Go(btn)
 
                 viewModel.signUp(
+                    btn,
                     requireContext(),
                     binding.etRegisterEmail.text.toString(),
                     binding.etRegisterPassword.text.toString()

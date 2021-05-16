@@ -5,7 +5,7 @@ import androidx.databinding.BindingAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gloorystudio.sholist.LoadingDialogShow
-import com.gloorystudio.sholist.model.Item
+import com.gloorystudio.sholist.data.db.entity.Item
 
 
 class ListViewModel : ViewModel(){

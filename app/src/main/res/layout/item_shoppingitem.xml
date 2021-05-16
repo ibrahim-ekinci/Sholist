@@ -9,7 +9,7 @@
         <import type="com.gloorystudio.sholist.UtilKt" />
         <variable
             name="item"
-            type="com.gloorystudio.sholist.model.Item" />
+            type="com.gloorystudio.sholist.data.db.entity.Item" />
     </data>
 
     <LinearLayout

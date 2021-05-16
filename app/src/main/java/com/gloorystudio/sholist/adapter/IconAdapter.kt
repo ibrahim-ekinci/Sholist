@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.ItemIconBinding
-import com.gloorystudio.sholist.model.User
+import com.gloorystudio.sholist.data.db.entity.User
 
 
 class IconAdapter(private val iconList:ArrayList<Int>):RecyclerView.Adapter<IconAdapter.IconViewHolder>() {

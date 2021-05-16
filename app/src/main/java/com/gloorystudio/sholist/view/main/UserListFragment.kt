@@ -15,7 +15,7 @@ import com.gloorystudio.sholist.adapter.UserListAdapter
 import com.gloorystudio.sholist.databinding.DialogAddUserBinding
 import com.gloorystudio.sholist.databinding.FragmentUserListBinding
 import com.gloorystudio.sholist.model.ShoppingCard
-import com.gloorystudio.sholist.model.User
+import com.gloorystudio.sholist.data.db.entity.User
 
 import com.gloorystudio.sholist.viewmodel.main.UserListViewModel
 

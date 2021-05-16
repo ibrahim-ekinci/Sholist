@@ -20,7 +20,7 @@ import com.gloorystudio.sholist.databinding.DialogAddItemBinding
 import com.gloorystudio.sholist.databinding.DialogNewlistBinding
 import com.gloorystudio.sholist.databinding.DialogSetIconBinding
 import com.gloorystudio.sholist.databinding.FragmentListBinding
-import com.gloorystudio.sholist.model.Item
+import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.model.ShoppingCard
 import com.gloorystudio.sholist.viewmodel.main.ListViewModel
 

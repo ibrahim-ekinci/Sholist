@@ -13,7 +13,7 @@ import com.gloorystudio.sholist.getUserNames
 import com.gloorystudio.sholist.getUsername
 
 
-import com.gloorystudio.sholist.model.User
+import com.gloorystudio.sholist.data.db.entity.User
 
 class UserListAdapter(private val userList :ArrayList<User> ):RecyclerView.Adapter<UserListAdapter.UserListViewHolder>() {
 
@@ -52,7 +52,7 @@ class UserListAdapter(private val userList :ArrayList<User> ):RecyclerView.Adapt
                 }
         }
 
-        fun bind(user:User){
+        fun bind(user: User){
             binding.user= user
             val context = binding.cardItem.context
             when(user.status){

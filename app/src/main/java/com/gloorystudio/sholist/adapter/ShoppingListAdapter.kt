@@ -8,18 +8,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.ItemShoppingitemBinding
-import com.gloorystudio.sholist.model.Item
+import com.gloorystudio.sholist.data.db.entity.Item
 
 
 class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Adapter<ShoppingListAdapter.ShoppingListViewHolder>() {
 
-    private var actionFragmentList: ((Item,CheckBox)->Unit)?= null
-    private var actionFragmentImageView: ((Item,ImageView)->Unit)?= null
+    private var actionFragmentList: ((Item, CheckBox)->Unit)?= null
+    private var actionFragmentImageView: ((Item, ImageView)->Unit)?= null
 
-    fun onClickCB(actionFragmentList:(Item,CheckBox)->Unit){
+    fun onClickCB(actionFragmentList:(Item, CheckBox)->Unit){
         this.actionFragmentList=actionFragmentList
     }
-    fun onClickIV(actionFragmentImageView:(Item,ImageView)->Unit){
+    fun onClickIV(actionFragmentImageView:(Item, ImageView)->Unit){
         this.actionFragmentImageView=actionFragmentImageView
     }
 

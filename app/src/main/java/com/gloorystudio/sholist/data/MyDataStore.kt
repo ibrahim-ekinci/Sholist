@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.gloorystudio.sholist.decrypt
 import com.gloorystudio.sholist.encrypt
-import com.gloorystudio.sholist.model.User
+import com.gloorystudio.sholist.data.db.entity.User
 import kotlinx.coroutines.flow.first
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -52,7 +52,8 @@ suspend fun getUserData(context: Context): User? {
             username = preferences[USER_USERNAME_KEY]?.decrypt(pwUser),
             verification = null,
             status = null,
-            deviceId = null
+            deviceId = null,
+            shoppingListId = null
         )
     }
 

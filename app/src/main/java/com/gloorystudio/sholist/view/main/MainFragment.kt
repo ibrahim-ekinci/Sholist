@@ -2,15 +2,20 @@ package com.gloorystudio.sholist.view.main
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gloorystudio.sholist.*
+import com.gloorystudio.sholist.Go
+import com.gloorystudio.sholist.LoadingDialogCancel
+import com.gloorystudio.sholist.LoadingDialogShow
+import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.adapter.InvitationAdapter
 import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
 import com.gloorystudio.sholist.databinding.DialogInvitationBinding
