@@ -17,6 +17,11 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+object currentData{
+    var currentUser:User?=null
+    var currentJwt:String?=null
+}
+
 
 //for short fragment train
 fun NavDirections.Go(view: View) {
@@ -139,9 +144,6 @@ fun ArrayList<ShoppingCard>.toEntity():ArrayList<ShoppingListWithItemsAndUsers>{
 }
 
 fun ShoppingListWithItemsAndUsers.toModel(): ShoppingCard {
-    for (i in items){
-        println(i.name)
-    }
 
     return ShoppingCard(
         shoppingList.id,

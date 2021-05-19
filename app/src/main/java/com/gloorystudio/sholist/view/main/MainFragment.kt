@@ -12,21 +12,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gloorystudio.sholist.Go
-import com.gloorystudio.sholist.LoadingDialogCancel
-import com.gloorystudio.sholist.LoadingDialogShow
-import com.gloorystudio.sholist.R
+import com.gloorystudio.sholist.*
 import com.gloorystudio.sholist.adapter.InvitationAdapter
 import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
 import com.gloorystudio.sholist.databinding.DialogInvitationBinding
 import com.gloorystudio.sholist.databinding.DialogNewlistBinding
 import com.gloorystudio.sholist.databinding.FragmentMainBinding
-import com.gloorystudio.sholist.viewmodel.main.ShoppingCardViewModel
+import com.gloorystudio.sholist.viewmodel.main.MainViewModel
 
 
 class MainFragment : Fragment() {
 
-    private lateinit var viewModel : ShoppingCardViewModel
+    private lateinit var viewModel : MainViewModel
     private val shoppingCardAdapter=ShoppingCardAdapter(arrayListOf())
     private val invitationAdapter=InvitationAdapter(arrayListOf())
     private lateinit var dialogBinding: DialogInvitationBinding
@@ -60,12 +57,18 @@ class MainFragment : Fragment() {
         //TODO: DAVET LİSTELERİ ÇEKİLECEK.
 
 
-        viewModel = ViewModelProvider(this).get(ShoppingCardViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
-        //For Dialog
+        //For Invitation Dialog
         dialogBinding = DialogInvitationBinding.inflate(LayoutInflater.from(requireContext()))
-        viewModel.refreshInvitationsData()
+        viewModel.refreshInvitationsData(requireContext())
         dialogBinding.rvInvitation.layoutManager=LinearLayoutManager(requireContext())
+        invitationAdapter.onClickIvConfirm{ invation,iv->
+            viewModel.invitationAccept(requireContext(),true,invation)
+        }
+        invitationAdapter.onClickIvCancel{ invation,iv->
+            viewModel.invitationAccept(requireContext(),false,invation)
+        }
         dialogBinding.rvInvitation.adapter=invitationAdapter
         observeInvitationsLiveData(dialogBinding)
 
@@ -119,7 +122,17 @@ class MainFragment : Fragment() {
             }
             dialog.setContentView(dialogBinding.root)
             dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialogBinding.btnCancel.setOnClickListener { dialog.cancel() }
+            dialogBinding.btnAdd.setOnClickListener {
+                val text = dialogBinding.etListName.text.toString()
+                if (text.isNotEmpty()){
+                    viewModel.createNewListWithApi(requireContext(),text,color,dialog)
+                }else{
+                    Toast.makeText(requireContext(), getString(R.string.please_enter_list_name), Toast.LENGTH_SHORT).show()
+                }
+            }
             dialog.show()
+            println("jwt-"+currentData.currentJwt)
         }
 
     }

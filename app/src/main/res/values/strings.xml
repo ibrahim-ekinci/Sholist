@@ -72,4 +72,8 @@
     <string name="invalid_name_and_surname">Invalid name and surname.</string>
     <string name="current_username">Current username.</string>
     <string name="username_must_be_least_4_char">Username must be at least 4 characters.</string>
+    <string name="the_invitation_has_been_sent">The invitation has been sent.</string>
+    <string name="please_enter_username">Please enter username.</string>
+    <string name="please_enter_list_name">Please enter list name.</string>
+    <string name="user_removed">User removed.</string>
 </resources>

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "765314089048",
+    "firebase_url": "https://appsholist-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "appsholist",
     "storage_bucket": "appsholist.appspot.com"
   },

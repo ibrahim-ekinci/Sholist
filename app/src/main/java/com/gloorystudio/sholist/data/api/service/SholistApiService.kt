@@ -3,6 +3,7 @@ package com.gloorystudio.sholist.data.api.service
 import com.gloorystudio.sholist.data.api.model.Item.DeleteItem
 import com.gloorystudio.sholist.data.api.model.Item.PatchItem
 import com.gloorystudio.sholist.data.api.model.Item.PostItem
+import com.gloorystudio.sholist.data.api.model.Jwt
 import com.gloorystudio.sholist.data.api.model.auth.*
 import com.gloorystudio.sholist.data.api.model.invitation.DeleteInvitation
 import com.gloorystudio.sholist.data.api.model.invitation.PatchInvitation
@@ -55,8 +56,8 @@ class SholistApiService {
         return api.forgotMyPassword(email)
     }
 
-    fun getShoppingCard(getShoppingCard: GetShoppingCard): Single<ApiResponseWithShoppingCard> {
-        return api.getShoppingCard(getShoppingCard)
+    fun getShoppingCard(jwt:String,shoppingCardId:String): Single<ApiResponseWithShoppingCard> {
+        return api.getShoppingCard(jwt,shoppingCardId)
     }
 
     fun getShoppingCardAll(jwt: String): Single<ApiResponseWithShoppingCardList> {

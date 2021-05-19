@@ -20,6 +20,10 @@ class UserInfoViewModel : ViewModel() {
     private val apiService = SholistApiService()
     private val disposable = CompositeDisposable()
 
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
     fun setName(context: Context,setNames: SetNames){
         LoadingDialogShow(context)
 

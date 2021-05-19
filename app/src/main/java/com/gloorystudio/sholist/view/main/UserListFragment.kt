@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -54,8 +55,13 @@ class UserListFragment : Fragment() {
 
 
             viewModel = ViewModelProvider(this).get(UserListViewModel::class.java)
-            viewModel.refreshUserData(shoppingCardData.userList)
+            viewModel.refreshUserData(shoppingCardData,requireContext())
             binding.rvUsers.layoutManager= LinearLayoutManager(requireContext())
+            userListAdapter.onClickCB{user,iv->
+                if (user.status == true){
+                    viewModel.removeUser(requireContext(),user)
+                }
+            }
             binding.rvUsers.adapter=userListAdapter
             observeLiveData()
 
@@ -68,6 +74,15 @@ class UserListFragment : Fragment() {
                 val dialogBinding =DialogAddUserBinding.inflate(LayoutInflater.from(requireContext()))
                 dialog.setContentView(dialogBinding.root)
                 dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                dialogBinding.btnAdd.setOnClickListener {
+                  val text = dialogBinding.etUsername.text.toString()
+                    if (text.isNotEmpty()){
+                        viewModel.addNewUser(requireContext(),text,dialog)
+                    }else{
+                        Toast.makeText(requireContext(), getString(R.string.please_enter_username), Toast.LENGTH_SHORT).show()
+                    }
+                }
+                dialogBinding.btnCancel.setOnClickListener { dialog.cancel() }
                 dialog.show()
             }
 

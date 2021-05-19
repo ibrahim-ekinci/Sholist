@@ -18,5 +18,6 @@ data class ShoppingList(
     @PrimaryKey(autoGenerate = true)
     var dbId = 0
 
-    var dbVersion =0
+    var dbVersion ="default"
+    var isDbSync=true
 }

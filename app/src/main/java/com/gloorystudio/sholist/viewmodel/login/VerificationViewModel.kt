@@ -17,6 +17,10 @@ class VerificationViewModel : ViewModel() {
     private val apiService = SholistApiService()
     private val disposable = CompositeDisposable()
 
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
     fun sendMail(context: Context,email: String) {
         disposable.add(apiService.verifyEmail(email)
             .subscribeOn(Schedulers.newThread())

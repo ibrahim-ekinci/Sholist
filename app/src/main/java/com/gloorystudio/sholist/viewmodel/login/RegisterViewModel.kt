@@ -20,6 +20,11 @@ class RegisterViewModel : ViewModel() {
     private val apiService = SholistApiService()
     private val disposable = CompositeDisposable()
 
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
+
     fun signUp(btn: View, context: Context, email: String, pass: String) {
         LoadingDialogShow(context)
 

@@ -10,14 +10,18 @@ import androidx.lifecycle.viewModelScope
 import com.gloorystudio.sholist.LoadingDialogCancel
 import com.gloorystudio.sholist.LoadingDialogShow
 import com.gloorystudio.sholist.R
+import com.gloorystudio.sholist.currentData.currentJwt
+import com.gloorystudio.sholist.currentData.currentUser
 import com.gloorystudio.sholist.data.api.model.auth.LoginWithGoogle
 import com.gloorystudio.sholist.data.api.model.auth.SignIn
 import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithJwt
 import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithJwtAndTt
 import com.gloorystudio.sholist.data.api.service.SholistApiService
+import com.gloorystudio.sholist.data.db.entity.User
+import com.gloorystudio.sholist.data.getJwt
+import com.gloorystudio.sholist.data.getUserData
 import com.gloorystudio.sholist.data.setJwt
 import com.gloorystudio.sholist.data.setUserData
-import com.gloorystudio.sholist.data.db.entity.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -40,6 +44,10 @@ class LoginViewModel : ViewModel() {
         auth = Firebase.auth
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
 
     fun loginWithGoogle(idToken: String, activity: FragmentActivity) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -50,15 +58,19 @@ class LoginViewModel : ViewModel() {
                     Log.d(ContentValues.TAG, "signInWithCredential:success")
                     val user = auth.currentUser
 
-                    user?.let { u->
-                        loginWithGoogleApi(activity,u)
+                    user?.let { u ->
+                        loginWithGoogleApi(activity, u)
                     }
                     println(user.email)
                     println(user.displayName)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(ContentValues.TAG, "signInWithCredential:failure", task.exception)
-                    Toast.makeText(activity, activity.getString(R.string.login_failed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity,
+                        activity.getString(R.string.login_failed),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }
@@ -67,17 +79,24 @@ class LoginViewModel : ViewModel() {
         LoadingDialogShow(activity)
 
         disposable.add(
-            apiService.loginWithGoogle(LoginWithGoogle(getDeviceId(activity),user!!.email,getStaticToken()))
+            apiService.loginWithGoogle(
+                LoginWithGoogle(
+                    getDeviceId(activity),
+                    user!!.email,
+                    getStaticToken()
+                )
+            )
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object :DisposableSingleObserver<ApiResponseWithJwtAndTt>(){
+                .subscribeWith(object : DisposableSingleObserver<ApiResponseWithJwtAndTt>() {
                     override fun onSuccess(response: ApiResponseWithJwtAndTt) {
                         LoadingDialogCancel()
 
-                        if (response.registered){
-                            saveJwtAndUser(activity,response.jwt,response.member)
+                        if (response.registered) {
+                            saveJwtAndUser(activity, response.jwt, response.member)
+
                             //TODO: MAİN FLOW A YÖNLENDİR.
-                        }else{
+                        } else {
                             //TODO:  kullanıcı isminin belirlenmemiş olduğunu belirtir
                             //YÖNLENDİR.
                         }
@@ -90,6 +109,12 @@ class LoginViewModel : ViewModel() {
 
                 })
         )
+        saveJwtAndUser(
+            activity,
+            "response.jwt",
+            User("12", null, "test@email", true, "ibrahim", "ibrahim", "123", null)
+        )
+        readJwtAndUser(activity)
     }
 
 
@@ -103,16 +128,15 @@ class LoginViewModel : ViewModel() {
                     override fun onSuccess(response: ApiResponseWithJwt) {
                         LoadingDialogCancel()
                         if (response.state == "succes") {
-                            saveJwtAndUser(context,response.jwt,response.member)
+                            saveJwtAndUser(context, response.jwt, response.member)
                             //TODO: MAİN FLOW A YÖNLENDİR.
-                        }
-                        else {
-                            when(response.code){
-                                402->{
+                        } else {
+                            when (response.code) {
+                                402 -> {
                                     //TODO:  kullanıcı isminin belirlenmemiş olduğunu belirtir
                                     //YÖNLENDİR.
                                 }
-                                205->{
+                                205 -> {
                                     //TODO:  kullanıcı email'ini onaylamadığını belirtir
                                     //YÖNLENDİR.
                                 }
@@ -131,7 +155,8 @@ class LoginViewModel : ViewModel() {
 
 
     }
-    private fun getDeviceId(context: Context):String?{
+
+    private fun getDeviceId(context: Context): String? {
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE)
 
         //OneSignal Initialization
@@ -140,18 +165,27 @@ class LoginViewModel : ViewModel() {
 
         return OneSignal.getDeviceState()?.userId
     }
-    private fun getStaticToken():String{
+
+    private fun getStaticToken(): String {
         return ""//TODO: RETURNT STATİCID
     }
 
-    private fun saveJwtAndUser(context: Context,jwt:String?,user: User?) {
+    private fun saveJwtAndUser(context: Context, jwt: String?, user: User?) {
         viewModelScope.launch {
-            jwt?.let { j->
+            jwt?.let { j ->
                 setJwt(context, j)
             }
-            user?.let { u->
-                setUserData(context,u)
+            user?.let { u ->
+                setUserData(context, u)
             }
         }
     }
+
+    private fun readJwtAndUser(context: Context) {
+        viewModelScope.launch {
+            currentJwt = getJwt(context)
+            currentUser = getUserData(context)
+        }
+    }
+
 }

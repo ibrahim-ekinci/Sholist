@@ -42,10 +42,10 @@ suspend fun getJwt(context: Context): String? {
 
 suspend fun getUserData(context: Context): User? {
     val preferences = context.dataStore.data.first()
-    if (preferences[USER_ID_KEY]?.isEmpty() == true)
-        return null
+    return if (preferences[USER_ID_KEY]==null||preferences[USER_ID_KEY]=="")
+        null
     else {
-        return User(
+        User(
             id = preferences[USER_ID_KEY]!!.decrypt(pwUser),
             email = preferences[USER_MAIL_KEY]?.decrypt(pwUser),
             name = preferences[USER_NAME_KEY]?.decrypt(pwUser),

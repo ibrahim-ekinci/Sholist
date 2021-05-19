@@ -104,4 +104,5 @@ interface SholistDao {
         deleteAllUser(id)
     }
 
+
 }

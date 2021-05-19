@@ -47,6 +47,12 @@ class ListFragment : Fragment() {
     }
 
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.removeListener()
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var shoppingCard: ShoppingCard?=null
@@ -107,8 +113,8 @@ class ListFragment : Fragment() {
 
 
             viewModel = ViewModelProvider(this).get(ListViewModel :: class.java)
-
-            viewModel.refreshItemListData(shoppingCardData.itemList)
+            viewModel.shoppingCard= shoppingCardData
+            viewModel.refreshItemListData(shoppingCardData.itemList,requireContext())
             binding.rvItemList.layoutManager=LinearLayoutManager(requireContext())
             binding.rvItemList.adapter=shoppinglistAdapter
             observeLiveData()
@@ -315,8 +321,6 @@ class ListFragment : Fragment() {
         iconList.add(R.drawable.watermelon_3)
         iconList.add(R.drawable.whiskey)
         iconList.add(R.drawable.whitewine)
-
-
 
         return iconList
     }

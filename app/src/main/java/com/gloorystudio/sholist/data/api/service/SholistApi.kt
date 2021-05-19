@@ -3,6 +3,7 @@ package com.gloorystudio.sholist.data.api.service
 import com.gloorystudio.sholist.data.api.model.Item.DeleteItem
 import com.gloorystudio.sholist.data.api.model.Item.PatchItem
 import com.gloorystudio.sholist.data.api.model.Item.PostItem
+import com.gloorystudio.sholist.data.api.model.Jwt
 import com.gloorystudio.sholist.data.api.model.auth.*
 import com.gloorystudio.sholist.data.api.model.invitation.DeleteInvitation
 import com.gloorystudio.sholist.data.api.model.invitation.PatchInvitation
@@ -55,12 +56,14 @@ interface SholistApi {
 
     //Alışveriş Listesi Getir
     @GET("shoppingCard")
-    fun getShoppingCard(@Body getShoppingCard: GetShoppingCard): Single<ApiResponseWithShoppingCard>
+    fun getShoppingCard(
+        @Query("jwt")jwt: String,
+        @Query("shoppingCardId")shoppingCardId: String
+    ): Single<ApiResponseWithShoppingCard>
 
     //Sahibi Olunan Bütün Alışveriş Listesilerini Getir
-    @FormUrlEncoded
     @GET("shoppingCardAll")
-    fun getShoppingCardAll(@Field("jwt") jwt: String): Single<ApiResponseWithShoppingCardList>
+    fun getShoppingCardAll( @Query("jwt")jwt: String): Single<ApiResponseWithShoppingCardList>
 
     //Alışveriş Listesi Oluştur
     @POST("shoppingCard")
@@ -83,9 +86,8 @@ interface SholistApi {
     fun patchItem(@Body patchItem: PatchItem): Single<ApiResponseWithItem>
 
     //Alışveriş Listesine Eklenmek İçin Gönderilmiş İstekleri Görüntüleme
-    @FormUrlEncoded
     @GET("invitation")
-    fun getInvitation(@Field("jwt") jwt: String): Single<ApiResponseWithInvitation>
+    fun getInvitation( @Query("jwt")jwt: String): Single<ApiResponseWithInvitation>
 
     //Alışveriş Listesine Üye Ekleme İsteği Gönderme
     @POST("invitation")
