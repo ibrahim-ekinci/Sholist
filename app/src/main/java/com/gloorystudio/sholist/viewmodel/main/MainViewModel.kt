@@ -21,6 +21,11 @@ import com.gloorystudio.sholist.data.db.entity.User
 import com.gloorystudio.sholist.data.db.service.SholistDatabase
 import com.gloorystudio.sholist.model.Invitation
 import com.gloorystudio.sholist.model.ShoppingCard
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -42,6 +47,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     private val apiService = SholistApiService()
     private val disposable = CompositeDisposable()
+    private val dbRef = Firebase.database.reference
+    var context:Context?=null
 
 /*
     private lateinit var forRemoveListenershoppingLists: ArrayList<ShoppingCard>
@@ -71,11 +78,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     }
 
-    fun refreshShoppingCardsData() {
+    fun refreshShoppingCardsData(context: Context) {
         var sList: ArrayList<ShoppingCard> = ArrayList<ShoppingCard>()
         var itemList: ArrayList<Item> = ArrayList<Item>()
         var userList: ArrayList<User> = ArrayList<User>()
-
+        this.context=context
 
         userList.clear()
         itemList.clear()
@@ -143,6 +150,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         override fun onSuccess(response: ApiResponseWithInvitation) {
                             LoadingDialogCancel()
                             Invitations.value=response.requests
+                            InvitationsIsEmpty.value = response.requests.isEmpty()
                         }
 
                         override fun onError(e: Throwable) {
@@ -235,11 +243,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         invitationList.add(Invitation("2", "", "Bim", "Yunus Emre", "26.25.2020"))
         invitationList.add(Invitation("3", "", "A-101", "Recep", "26.25.2020"))
         invitationList.add(Invitation("4", "", "Dükkan", "Hilal", "26.25.2020"))
-
-
-        getAllInvitations(context)
+        this.context=context
+        addInvitationListener()
         Invitations.value = invitationList
-        InvitationsIsEmpty.value = invitationList.isEmpty()
     }
 
 
@@ -273,16 +279,39 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(object :DisposableSingleObserver<ApiResponse>(){
                         override fun onSuccess(response: ApiResponse) {
+                            LoadingDialogCancel()
                            getAllInvitations(context)
                         }
 
                         override fun onError(e: Throwable) {
+                            LoadingDialogCancel()
                             Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                         }
 
                     })
 
             )
+        }
+    }
+    val invitationListener = object : ValueEventListener {
+
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            context?.let { c->
+               getAllInvitations(c)
+            }
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {}
+    }
+    private fun addInvitationListener(){
+        currentUser?.let {u->
+            dbRef.child("Invitations").child(u.username.toString()).addValueEventListener(invitationListener)
+        }
+
+    }
+    fun removeInvitationListener(){
+        currentUser?.let {u->
+            dbRef.child("Invitations").child(u.username.toString()).removeEventListener(invitationListener)
         }
     }
 

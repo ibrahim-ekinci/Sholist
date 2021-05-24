@@ -111,9 +111,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun addListener(id: String) {
-
         dbRef.child("Lists").child(id).child("v").addValueEventListener(listener)
-
     }
 
     fun removeListener() {

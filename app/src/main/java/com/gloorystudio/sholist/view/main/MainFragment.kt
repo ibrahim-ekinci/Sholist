@@ -23,10 +23,11 @@ import com.gloorystudio.sholist.viewmodel.main.MainViewModel
 
 class MainFragment : Fragment() {
 
-    private lateinit var viewModel : MainViewModel
-    private val shoppingCardAdapter=ShoppingCardAdapter(arrayListOf())
-    private val invitationAdapter=InvitationAdapter(arrayListOf())
-    private lateinit var dialogBinding: DialogInvitationBinding
+    private lateinit var viewModel: MainViewModel
+    private val shoppingCardAdapter = ShoppingCardAdapter(arrayListOf())
+    private val invitationAdapter = InvitationAdapter(arrayListOf())
+    private lateinit var dialogBindingInvitations: DialogInvitationBinding
+    private lateinit var dialogInvitations: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,25 +35,26 @@ class MainFragment : Fragment() {
 
         setHasOptionsMenu(true)
     }
-    private lateinit var  binding : FragmentMainBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+
+    private lateinit var binding: FragmentMainBinding
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
 
 
-        binding= DataBindingUtil.inflate(inflater,R.layout.fragment_main,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
         return binding.root
     }
-
-
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 
-        requireActivity().window.statusBarColor=ContextCompat.getColor(requireContext(),R.color.green_dark)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.green_dark)
 
         //TODO: DAVET LİSTELERİ ÇEKİLECEK.
 
@@ -60,104 +62,164 @@ class MainFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         //For Invitation Dialog
-        dialogBinding = DialogInvitationBinding.inflate(LayoutInflater.from(requireContext()))
+        dialogBindingInvitations =
+            DialogInvitationBinding.inflate(LayoutInflater.from(requireContext()))
         viewModel.refreshInvitationsData(requireContext())
-        dialogBinding.rvInvitation.layoutManager=LinearLayoutManager(requireContext())
-        invitationAdapter.onClickIvConfirm{ invation,iv->
-            viewModel.invitationAccept(requireContext(),true,invation)
+        dialogBindingInvitations.rvInvitation.layoutManager = LinearLayoutManager(requireContext())
+        dialogInvitations = Dialog(requireContext())
+        dialogInvitations.setContentView(dialogBindingInvitations.root)
+        invitationAdapter.onClickIvConfirm { invation, iv ->
+            viewModel.invitationAccept(requireContext(), true, invation)
         }
-        invitationAdapter.onClickIvCancel{ invation,iv->
-            viewModel.invitationAccept(requireContext(),false,invation)
+        invitationAdapter.onClickIvCancel { invation, iv ->
+            viewModel.invitationAccept(requireContext(), false, invation)
         }
-        dialogBinding.rvInvitation.adapter=invitationAdapter
-        observeInvitationsLiveData(dialogBinding)
+        dialogBindingInvitations.rvInvitation.adapter = invitationAdapter
+        observeInvitationsLiveData(dialogBindingInvitations)
 
         //For ShoppingCardList
-        viewModel.refreshShoppingCardsData()
-        binding.rvShopingcards.layoutManager=LinearLayoutManager(requireContext())
-        binding.rvShopingcards.adapter=shoppingCardAdapter
+        viewModel.refreshShoppingCardsData(requireContext())
+        binding.rvShopingcards.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvShopingcards.adapter = shoppingCardAdapter
         observeShoppingCardsLiveData()
 
         binding.topAppBar.setOnMenuItemClickListener {
-            when(it.itemId){
-                R.id.menu_item_info->{
+            when (it.itemId) {
+                R.id.menu_item_info -> {
 
                 }
-                R.id.menu_item_settings->{
-                    MainFragmentDirections.actionMainFragmentToSettingsFragment().Go(binding.topAppBar)
+                R.id.menu_item_settings -> {
+                    MainFragmentDirections.actionMainFragmentToSettingsFragment()
+                        .Go(binding.topAppBar)
                 }
-                R.id.menu_item_invitation->{
+                R.id.menu_item_invitation -> {
                     ShowInvitations()
                 }
             }
             true
         }
 
-        shoppingCardAdapter.onClickCard{ shoppingCard->
-            MainFragmentDirections.actionMainFragmentToListFragment(shoppingCard).Go(binding.topAppBar)
+        shoppingCardAdapter.onClickCard { shoppingCard ->
+            MainFragmentDirections.actionMainFragmentToListFragment(shoppingCard)
+                .Go(binding.topAppBar)
         }
 
 
         binding.floatingActionButton.setOnClickListener {
-            var dialog =Dialog(requireContext())
-            var color=1
+            var dialog = Dialog(requireContext())
+            var color = 1
             val dialogBinding = DialogNewlistBinding.inflate(LayoutInflater.from(requireContext()))
             dialogBinding.llBlue.setOnClickListener {
-                color=1
-                dialogBinding.tvBlue.setTextColor(ContextCompat.getColor(requireContext(),R.color.card_bg1))
-                dialogBinding.tvGreen.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
-                dialogBinding.tvOrange.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
+                color = 1
+                dialogBinding.tvBlue.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.card_bg1
+                    )
+                )
+                dialogBinding.tvGreen.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.sho_gray
+                    )
+                )
+                dialogBinding.tvOrange.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.sho_gray
+                    )
+                )
             }
             dialogBinding.llGreen.setOnClickListener {
-                color=2
-                dialogBinding.tvBlue.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
-                dialogBinding.tvGreen.setTextColor(ContextCompat.getColor(requireContext(),R.color.card_bg2))
-                dialogBinding.tvOrange.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
+                color = 2
+                dialogBinding.tvBlue.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.sho_gray
+                    )
+                )
+                dialogBinding.tvGreen.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.card_bg2
+                    )
+                )
+                dialogBinding.tvOrange.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.sho_gray
+                    )
+                )
             }
             dialogBinding.llOrange.setOnClickListener {
-                color=3
-                dialogBinding.tvBlue.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
-                dialogBinding.tvGreen.setTextColor(ContextCompat.getColor(requireContext(),R.color.sho_gray))
-                dialogBinding.tvOrange.setTextColor(ContextCompat.getColor(requireContext(),R.color.card_bg3))
+                color = 3
+                dialogBinding.tvBlue.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.sho_gray
+                    )
+                )
+                dialogBinding.tvGreen.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.sho_gray
+                    )
+                )
+                dialogBinding.tvOrange.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.card_bg3
+                    )
+                )
             }
             dialog.setContentView(dialogBinding.root)
             dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
             dialogBinding.btnCancel.setOnClickListener { dialog.cancel() }
             dialogBinding.btnAdd.setOnClickListener {
                 val text = dialogBinding.etListName.text.toString()
-                if (text.isNotEmpty()){
-                    viewModel.createNewListWithApi(requireContext(),text,color,dialog)
-                }else{
-                    Toast.makeText(requireContext(), getString(R.string.please_enter_list_name), Toast.LENGTH_SHORT).show()
+                if (text.isNotEmpty()) {
+                    viewModel.createNewListWithApi(requireContext(), text, color, dialog)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.please_enter_list_name),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             dialog.show()
-            println("jwt-"+currentData.currentJwt)
+            println("jwt-" + currentData.currentJwt)
         }
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.removeInvitationListener()
+    }
+
     private fun ShowInvitations() {
-        var dialog =Dialog(requireContext())
 
+        dialogInvitations.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialogBindingInvitations.btnCancel.setOnClickListener {
+            dialogInvitations.cancel()
+        }
 
-        dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.show()
+        dialogInvitations.show()
 
     }
 
     private fun observeShoppingCardsLiveData() {
-        viewModel.ShoppingCards.observe(viewLifecycleOwner,{cards->
+        viewModel.ShoppingCards.observe(viewLifecycleOwner, { cards ->
             cards?.let {
 
                 shoppingCardAdapter.updateShopingCard(it)
             }
         })
-        viewModel.ShoppingCardsIsEmpty.observe(viewLifecycleOwner,{isEmpty->
+        viewModel.ShoppingCardsIsEmpty.observe(viewLifecycleOwner, { isEmpty ->
             isEmpty?.let {
-                if(it) binding.llEmptyList.visibility=View.VISIBLE
-                else binding.llEmptyList.visibility=View.GONE
+                if (it) binding.llEmptyList.visibility = View.VISIBLE
+                else binding.llEmptyList.visibility = View.GONE
             }
         })
         viewModel.ShoppingCardsError.observe(viewLifecycleOwner, { error ->
@@ -168,7 +230,7 @@ class MainFragment : Fragment() {
                 }
             }
         })
-        viewModel.ShoppingCardsLoading.observe(viewLifecycleOwner,{loading->
+        viewModel.ShoppingCardsLoading.observe(viewLifecycleOwner, { loading ->
             loading?.let {
                 if (loading) LoadingDialogShow(requireContext())
                 else LoadingDialogCancel()
@@ -176,21 +238,21 @@ class MainFragment : Fragment() {
         })
 
     }
-    private fun observeInvitationsLiveData(dialogBinding: DialogInvitationBinding){
-        viewModel.Invitations.observe(viewLifecycleOwner,{invitations->
+
+    private fun observeInvitationsLiveData(dialogBinding: DialogInvitationBinding) {
+        viewModel.Invitations.observe(viewLifecycleOwner, { invitations ->
             invitations?.let {
                 invitationAdapter.updateInvitation(it)
             }
         })
-        viewModel.InvitationsIsEmpty.observe(viewLifecycleOwner,{isEmpty->
+        viewModel.InvitationsIsEmpty.observe(viewLifecycleOwner, { isEmpty ->
             isEmpty?.let {
-                if (isEmpty){
-                    dialogBinding.tvIsempty.visibility =  View.VISIBLE
-                    binding.topAppBar.menu.findItem(R.id.menu_item_invitation).setVisible(false)
-                }
-                else{
-                    dialogBinding.tvIsempty.visibility=View.GONE
-                    binding.topAppBar.menu.findItem(R.id.menu_item_invitation).setVisible(true)
+                if (isEmpty) {
+                    dialogBinding.tvIsempty.visibility = View.VISIBLE
+                    binding.topAppBar.menu.findItem(R.id.menu_item_invitation).isVisible = false
+                } else {
+                    dialogBinding.tvIsempty.visibility = View.GONE
+                    binding.topAppBar.menu.findItem(R.id.menu_item_invitation).isVisible = true
                 }
             }
         })
