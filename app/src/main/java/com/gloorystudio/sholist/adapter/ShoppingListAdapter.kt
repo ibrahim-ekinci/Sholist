@@ -1,5 +1,6 @@
 package com.gloorystudio.sholist.adapter
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -13,10 +14,10 @@ import com.gloorystudio.sholist.data.db.entity.Item
 
 class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Adapter<ShoppingListAdapter.ShoppingListViewHolder>() {
 
-    private var actionFragmentList: ((Item, CheckBox)->Unit)?= null
+    private var actionFragmentList: ((Int,Item, CheckBox)->Unit)?= null
     private var actionFragmentImageView: ((Item, ImageView)->Unit)?= null
 
-    fun onClickCB(actionFragmentList:(Item, CheckBox)->Unit){
+    fun onClickCB(actionFragmentList:(Int,Item, CheckBox)->Unit){
         this.actionFragmentList=actionFragmentList
     }
     fun onClickIV(actionFragmentImageView:(Item, ImageView)->Unit){
@@ -38,10 +39,28 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
        return itemList.size
     }
 
-    fun updateItem(it: List<Item>) {
+    fun updateItemList(it: List<Item>) {
         itemList.clear()
         itemList.addAll(it)
+        itemList.sortBy { it->it.checked}
         notifyDataSetChanged()
+    }
+
+    fun updateItem(position: Int,item: Item,isChecked:Boolean,checkBox:CheckBox) {
+        val newItem = Item(item.id,item.shoppingListId,item.name,item.count,isChecked,item.img)
+        itemList.removeAt(position)
+        notifyItemRemoved(position)
+        if (isChecked){//alındı olarak işaretlendi
+            itemList.add(newItem)
+            notifyItemInserted(itemList.size)
+        }//Alınma işlemi geri alındı
+        else {
+            itemList.reverse()
+            itemList.add(newItem)
+            itemList.reverse()
+            notifyItemInserted(0)
+        }
+        checkBox.isEnabled=true
     }
 
 
@@ -49,7 +68,7 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
 
         init {
             binding.cbItem.setOnClickListener {
-                actionFragmentList?.invoke(itemList[adapterPosition],binding.cbItem)
+                actionFragmentList?.invoke(adapterPosition,itemList[adapterPosition],binding.cbItem)
             }
 
             binding.cardItem.setOnClickListener {
@@ -58,13 +77,14 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
             binding.ivIcon.setOnClickListener {
                 actionFragmentImageView?.invoke(itemList[adapterPosition],binding.ivIcon)
             }
-
-
         }
-        fun bind(item: Item, actionFragmentList: ((Item, CheckBox) -> Unit)?, actionFragmentImageView: ((Item, ImageView) -> Unit)?){
+        fun bind(item: Item, actionFragmentList: ((Int,Item, CheckBox) -> Unit)?, actionFragmentImageView: ((Item, ImageView) -> Unit)?){
             binding.item=item
-
-
+            if (itemList[adapterPosition].checked){
+                binding.cbItem.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            }else{
+                binding.cbItem.paintFlags= Paint.ANTI_ALIAS_FLAG
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.gloorystudio.sholist.view.main
 
 import android.app.Dialog
+import android.graphics.Paint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -119,11 +120,14 @@ class ListFragment : Fragment() {
             binding.rvItemList.adapter=shoppinglistAdapter
             observeLiveData()
 
-            shoppinglistAdapter.onClickCB {item,checkBox->
+            shoppinglistAdapter.onClickCB {position,item,checkBox->
+                checkBox.isEnabled=false
                 if (checkBox.isChecked){
-
+                    shoppinglistAdapter.updateItem(position,item,checkBox.isChecked,checkBox)
+                  //  checkBox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 }else{
-
+                    shoppinglistAdapter.updateItem(position,item,checkBox.isChecked,checkBox)
+                  //  checkBox.paintFlags= Paint.ANTI_ALIAS_FLAG
                 }
             }
             shoppinglistAdapter.onClickIV { item, imageView ->
@@ -148,7 +152,7 @@ class ListFragment : Fragment() {
     private fun observeLiveData(){
         viewModel.items.observe(viewLifecycleOwner,{items->
             items?.let {
-                shoppinglistAdapter.updateItem(it)
+                shoppinglistAdapter.updateItemList(it)
             }
         }
         )
