@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
+import com.gloorystudio.sholist.data.firebase.getStaticToken
 import com.gloorystudio.sholist.data.getJwt
 import com.gloorystudio.sholist.data.setJwt
 import com.gloorystudio.sholist.databinding.FragmentLoginBinding
@@ -49,7 +50,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         viewModel.initialAuth()
-
+        getStaticToken()
         binding.llRegister.setOnClickListener {
             LoginFragmentDirections.actionLoginFragmentToRegisterFragment().Go(it)
             lifecycleScope.launch {

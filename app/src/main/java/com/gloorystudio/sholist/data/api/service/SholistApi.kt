@@ -106,7 +106,13 @@ interface SholistApi {
     fun changePassword(@Body changePassword: ChangePassword): Single<ApiResponse>
 
     //İsim Değiştirme
-    @POST("user")
-    fun changeName(@Body setNames: SetNames): Single<ApiResponse>
+    @PATCH("user")
+    fun changeName( @Query("jwt")jwt: String, @Query("newName")newName: String): Single<ApiResponse>
 
+    //Alışveriş Listesine Eklenmek İçin Gönderilmiş İstekleri Görüntüleme
+    @GET("isCurrentTemplate")
+    fun getTemplateVersion( @Query("jwt")jwt: String): Single<ApiResponseWithVersion>
+
+    @GET("templateItems")
+    fun getTemplateItems( @Query("jwt")jwt: String): Single<ApiResponseWithItemList>
 }

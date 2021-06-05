@@ -1,9 +1,11 @@
 package com.gloorystudio.sholist.data.api.model.response
 
+import com.gloorystudio.sholist.data.api.model.Item.Items
 import com.gloorystudio.sholist.model.Invitation
 import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.model.ShoppingCard
 import com.gloorystudio.sholist.data.db.entity.User
+import com.gloorystudio.sholist.model.DefItem
 
 
 interface IApiResponse {
@@ -78,4 +80,16 @@ data class ApiResponseWithInvitation(
     override val message: String,
     override val code: Int?,
     val requests: List<Invitation>
+) : IApiResponse
+data class ApiResponseWithVersion(
+    override val state: String,
+    override val message: String,
+    override val code: Int?,
+    val version: Int?
+) : IApiResponse
+data class ApiResponseWithItemList(
+    override val state: String,
+    override val message: String?,
+    override val code: Int?,
+    val items: List<DefItem>
 ) : IApiResponse

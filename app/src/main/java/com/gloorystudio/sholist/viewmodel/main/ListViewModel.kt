@@ -4,17 +4,20 @@ import android.app.Application
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.gloorystudio.sholist.LoadingDialogCancel
-import com.gloorystudio.sholist.LoadingDialogShow
+import com.gloorystudio.sholist.*
 import com.gloorystudio.sholist.currentData.currentJwt
-import com.gloorystudio.sholist.data.api.model.auth.SignOut
+import com.gloorystudio.sholist.data.api.model.Item.DeleteItem
+import com.gloorystudio.sholist.data.api.model.Item.Items
+import com.gloorystudio.sholist.data.api.model.Item.PatchItem
+import com.gloorystudio.sholist.data.api.model.Item.PostItem
+import com.gloorystudio.sholist.data.api.model.response.ApiResponse
+import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithItem
 import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithShoppingCard
+import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithShoppingCardAndItemList
 import com.gloorystudio.sholist.data.api.service.SholistApiService
 import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.data.db.service.SholistDatabase
 import com.gloorystudio.sholist.model.ShoppingCard
-import com.gloorystudio.sholist.toEntity
-import com.gloorystudio.sholist.toModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -25,6 +28,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
+import com.gloorystudio.sholist.data.firebase.*
+import java.util.*
 
 
 class ListViewModel(application: Application) : BaseViewModel(application) {
@@ -37,7 +42,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
 
     private val dbRef = Firebase.database.reference
     var shoppingCard: ShoppingCard? = null
-    var context:Context?=null
+    var context: Context? = null
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
@@ -46,7 +51,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     fun refreshItemListData(itemList: List<Item>, context: Context) {
         items.value = itemList
         shoppingCard?.let {
-            this.context=context
+            this.context = context
             addListener(it.id)
         }
     }
@@ -77,7 +82,6 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
                 )
             }
         }
-
     }
 
     private fun updateDataToSQLite(shoppingCard: ShoppingCard) {
@@ -92,7 +96,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     val listener = object : ValueEventListener {
 
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            context?.let { c->
+            context?.let { c ->
                 updateDataFromApi(c)
             }
         }
@@ -118,6 +122,93 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
         shoppingCard?.let {
             dbRef.child("Lists").child(it.id).child("v").removeEventListener(listener)
             println("removeListener")
+        }
+    }
+
+    fun addItem(context: Context, itemName: String, count: Int) {
+        currentJwt?.let { jwt ->
+            shoppingCard?.let { shoppingCard ->
+                LoadingDialogShow(context)
+                val item = Items(count,itemName,R.drawable.shop)
+                disposable.add(apiService.postItem(PostItem(item, jwt, shoppingCard.id))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(object :
+                        DisposableSingleObserver<ApiResponseWithShoppingCardAndItemList>() {
+                        override fun onSuccess(t: ApiResponseWithShoppingCardAndItemList) {
+                            LoadingDialogCancel()
+                            updateDataToSQLite(t.shoppingCard)
+                            setListVersion(t.shoppingCard.id,UUID.randomUUID().toString())
+                        }
+
+                        override fun onError(e: Throwable) {
+                            LoadingDialogCancel()
+                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                )
+            }
+        }
+    }
+
+    fun setIcon(context: Context, item: Item, icon: Int) {
+        currentJwt?.let { jwt->
+            shoppingCard?.let {shoppingCard ->
+                //LoadingDialogShow(context)
+                //TODO:SetIcon
+            }
+        }
+    }
+
+    fun editList(context: Context, name: String, color: Int) {
+        currentJwt?.let { jwt->
+            shoppingCard?.let { shoppingCard ->
+                //LoadingDialogShow(context)
+                //TODO:EDİTLİST
+            }
+        }
+    }
+
+    fun deleteItem(context: Context, item: Item) {
+        currentJwt?.let { jwt->
+            disposable.addAll(
+                apiService.deleteItem(DeleteItem(item.id,jwt))
+                    .observeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(object :DisposableSingleObserver<ApiResponse>(){
+                        override fun onSuccess(t: ApiResponse) {
+                            launch {
+                                val dao = SholistDatabase(getApplication()).sholistDao()
+                                dao.deleteItem(item.id)
+                                updateDataFromApi(context)
+                                item.shoppingListId?.let { setListVersion(it,UUID.randomUUID().toString()) }
+                            }
+                        }
+
+                        override fun onError(e: Throwable) {
+                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                        }
+
+                    })
+            )
+        }
+    }
+
+    fun updateItemChecked(requireContext: Context, item: Item, checked: Boolean) {
+        currentJwt?.let {jwt->
+            disposable.add(apiService.patchItem(PatchItem(checked,item.id,jwt))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object :DisposableSingleObserver<ApiResponseWithItem>(){
+                    override fun onSuccess(t: ApiResponseWithItem) {
+                        item.shoppingListId?.let { setListVersion(it,UUID.randomUUID().toString()) }
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Toast.makeText(context,e.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                }))
         }
     }
 }

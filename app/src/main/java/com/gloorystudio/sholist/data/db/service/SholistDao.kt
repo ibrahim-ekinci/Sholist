@@ -72,6 +72,7 @@ interface SholistDao {
     @Query("DELETE FROM item WHERE id=:id")
     suspend fun deleteItem(id:String)
 
+
     @Transaction
     suspend fun insertAllShoppingListWithItemsAndUsers(list: List<ShoppingListWithItemsAndUsers>) {
         for (item in list) {
@@ -102,6 +103,12 @@ interface SholistDao {
         deleteShoppingList(id)
         deleteAllItem(id)
         deleteAllUser(id)
+    }
+
+    @Transaction
+    suspend fun updateDefaulItemList(itemList:List<Item>){
+        deleteAllItem("default")
+        insertAllItems(itemList)
     }
 
 

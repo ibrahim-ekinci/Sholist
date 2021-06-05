@@ -73,7 +73,7 @@
                         app:layout_constraintTop_toTopOf="@+id/ll_counter">
 
                         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-
+                            android:id="@+id/autoCompleteTvItemName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textAutoComplete" />

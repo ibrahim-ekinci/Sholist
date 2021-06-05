@@ -12,6 +12,7 @@ import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.data.db.entity.ShoppingList
 import com.gloorystudio.sholist.data.db.entity.ShoppingListWithItemsAndUsers
 import com.gloorystudio.sholist.data.db.entity.User
+import com.gloorystudio.sholist.model.DefItem
 import com.gloorystudio.sholist.model.ShoppingCard
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -158,6 +159,20 @@ fun List<ShoppingListWithItemsAndUsers>.toModel():ArrayList<ShoppingCard>{
     val newList :ArrayList<ShoppingCard> = arrayListOf()
     for (shoppingListWithItemsAndUsers in this){
         newList.add(shoppingListWithItemsAndUsers.toModel())
+    }
+    return newList
+}
+fun List<DefItem>.toEntity():List<Item>{
+    val newList :ArrayList<Item> = arrayListOf()
+    for (defItem in this){
+        newList.add(Item(
+            "default",
+            "default",
+            defItem.name,
+            1,
+            false,
+            defItem.img
+        ))
     }
     return newList
 }

@@ -92,6 +92,9 @@ class MainFragment : Fragment() {
                     MainFragmentDirections.actionMainFragmentToSettingsFragment()
                         .Go(binding.topAppBar)
                 }
+                R.id.menu_item_logout ->{
+                    viewModel.logOut(requireContext(),requireActivity())
+                }
                 R.id.menu_item_invitation -> {
                     ShowInvitations()
                 }

@@ -1,26 +1,33 @@
 package com.gloorystudio.sholist.viewmodel.main
 
+import android.app.Activity
 import android.app.Application
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.gloorystudio.sholist.*
 import com.gloorystudio.sholist.currentData.currentJwt
 import com.gloorystudio.sholist.currentData.currentUser
 import com.gloorystudio.sholist.data.api.model.invitation.PatchInvitation
-import com.gloorystudio.sholist.data.api.model.response.ApiResponse
-import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithInvitation
-import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithShoppingCard
-import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithShoppingCardList
+import com.gloorystudio.sholist.data.api.model.response.*
 import com.gloorystudio.sholist.data.api.model.shoppingcard.PostShoppingCard
 import com.gloorystudio.sholist.data.api.service.SholistApiService
 import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.data.db.entity.ShoppingList
 import com.gloorystudio.sholist.data.db.entity.User
 import com.gloorystudio.sholist.data.db.service.SholistDatabase
+import com.gloorystudio.sholist.data.getItemVersion
+import com.gloorystudio.sholist.data.logout
+import com.gloorystudio.sholist.data.setItemVersion
+import com.gloorystudio.sholist.model.DefItem
 import com.gloorystudio.sholist.model.Invitation
 import com.gloorystudio.sholist.model.ShoppingCard
+import com.gloorystudio.sholist.view.main.MainActivity
+import com.gloorystudio.sholist.view.main.MainFragment
+import com.gloorystudio.sholist.view.main.MainFragmentDirections
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -48,7 +55,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private val apiService = SholistApiService()
     private val disposable = CompositeDisposable()
     private val dbRef = Firebase.database.reference
-    var context:Context?=null
+    var context: Context? = null
 
 /*
     private lateinit var forRemoveListenershoppingLists: ArrayList<ShoppingCard>
@@ -82,8 +89,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         var sList: ArrayList<ShoppingCard> = ArrayList<ShoppingCard>()
         var itemList: ArrayList<Item> = ArrayList<Item>()
         var userList: ArrayList<User> = ArrayList<User>()
-        this.context=context
-
+        this.context = context
+        checkDefaultItemList(context)
         userList.clear()
         itemList.clear()
         sList.clear()
@@ -115,15 +122,15 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         userList.add(User("3", "1", "asd@asd.com.tr", true, "Hilal Tokgöz", "hilal", "3", false))
         userList.add(User("4", "1", "asd@asd.com.tr", true, "Recep Yeşikaya", "recep", "4", false))
 
-        itemList.add(Item("1", "1", "Ekmek", 2, true, R.drawable.ic_jam))
-        itemList.add(Item("2", "1", "Elma", 3, true, R.drawable.ic_jam))
-        itemList.add(Item("3", "1", "Armut", 1, true, R.drawable.ic_jam))
-        itemList.add(Item("4", "1", "Muz", 1, true, R.drawable.ic_jam))
-        itemList.add(Item("5", "1", "Cips", 1, false, R.drawable.ic_jam))
-        itemList.add(Item("7", "1", "Kraker", 1, false, R.drawable.ic_jam))
-        itemList.add(Item("8", "1", "Selpak", 1, false, R.drawable.ic_jam))
-        itemList.add(Item("9", "1", "Su", 2, false, R.drawable.ic_jam))
-        itemList.add(Item("10", "1", "Kola", 2, false, R.drawable.ic_jam))
+        itemList.add(Item("1", "1", "Ekmek", 2, true, R.drawable.shop))
+        itemList.add(Item("2", "1", "Elma", 3, true, R.drawable.shop))
+        itemList.add(Item("3", "1", "Armut", 1, true, R.drawable.shop))
+        itemList.add(Item("4", "1", "Muz", 1, true, R.drawable.shop))
+        itemList.add(Item("5", "1", "Cips", 1, false, R.drawable.shop))
+        itemList.add(Item("7", "1", "Kraker", 1, false, R.drawable.shop))
+        itemList.add(Item("8", "1", "Selpak", 1, false, R.drawable.shop))
+        itemList.add(Item("9", "1", "Su", 2, false, R.drawable.shop))
+        itemList.add(Item("10", "1", "Kola", 2, false, R.drawable.shop))
 
         sList.add(ShoppingCard("1", "My Shoping List", "1", 1, userList, itemList))
         //   sList.add(ShoppingCard("2", "My Shoping List1", "1", 1, userList, itemList))
@@ -139,17 +146,79 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         ShoppingCardsLoading.value = false
     }
 
-    private fun getAllInvitations(context: Context){
-        currentJwt?.let { jwt->
+    private fun checkDefaultItemList(context: Context) {
+        viewModelScope.launch {
+            val localVersion = getItemVersion(context)
+            if (localVersion != null && localVersion != "") {
+                val version = localVersion.toInt()
+                checkVersion(context, version)
+            } else updateDefaultItems(1,context)
+        }
+
+    }
+
+    private fun checkVersion(context: Context, version: Int) {
+        currentJwt?.let { jwt ->
+            disposable.add(
+                apiService.getTemplateVersion(jwt)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(object : DisposableSingleObserver<ApiResponseWithVersion>() {
+                        override fun onSuccess(response: ApiResponseWithVersion) {
+                            if (version != response.version) {
+                                updateDefaultItems(version,context)
+                            }
+                        }
+
+                        override fun onError(e: Throwable) {
+                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                        }
+
+                    })
+            )
+        }
+
+    }
+
+    private fun updateDefaultItems(version: Int,context: Context) {
+        currentJwt?.let { jwt ->
+            disposable.add(apiService.getTemplateItems(jwt)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<ApiResponseWithItemList>() {
+                    override fun onSuccess(response: ApiResponseWithItemList) {
+                        updateLocalDefaultItems(context,version,response.items)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+                )
+            )
+        }
+    }
+
+    private fun updateLocalDefaultItems(context: Context,version: Int, items: List<DefItem>) {
+        launch {
+            val dao = SholistDatabase(getApplication()).sholistDao()
+            dao.updateDefaulItemList(items.toEntity())
+            setItemVersion(context,version.toString())
+        }
+    }
+
+    private fun getAllInvitations(context: Context) {
+        currentJwt?.let { jwt ->
             LoadingDialogShow(context)
             disposable.add(
                 apiService.getInvitation(jwt)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object :DisposableSingleObserver<ApiResponseWithInvitation>(){
+                    .subscribeWith(object : DisposableSingleObserver<ApiResponseWithInvitation>() {
                         override fun onSuccess(response: ApiResponseWithInvitation) {
                             LoadingDialogCancel()
-                            Invitations.value=response.requests
+                            Invitations.value = response.requests
                             InvitationsIsEmpty.value = response.requests.isEmpty()
                         }
 
@@ -180,15 +249,15 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         override fun onError(e: Throwable) {
                             LoadingDialogCancel()
                             Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                                currentUser?.let { user ->
-                                val shoppingList=ShoppingList(
+                            currentUser?.let { user ->
+                                val shoppingList = ShoppingList(
                                     UUID.randomUUID().toString(),
                                     name,
                                     user.id,
                                     color
                                 )
                                 //createNewListToSqlite(shoppingList,false)
-                                    //todo: internet yokken liste oluşturma yapılacak.
+                                //todo: internet yokken liste oluşturma yapılacak.
                             }
                         }
 
@@ -243,7 +312,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         invitationList.add(Invitation("2", "", "Bim", "Yunus Emre", "26.25.2020"))
         invitationList.add(Invitation("3", "", "A-101", "Recep", "26.25.2020"))
         invitationList.add(Invitation("4", "", "Dükkan", "Hilal", "26.25.2020"))
-        this.context=context
+        this.context = context
         addInvitationListener()
         Invitations.value = invitationList
     }
@@ -271,16 +340,16 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun invitationAccept(context: Context, isAccept: Boolean, invation: Invitation) {
-        currentJwt?.let { jwt->
+        currentJwt?.let { jwt ->
             LoadingDialogShow(context)
             disposable.add(
-                apiService.patchInvitation(PatchInvitation(isAccept,invation.id,jwt))
+                apiService.patchInvitation(PatchInvitation(isAccept, invation.id, jwt))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object :DisposableSingleObserver<ApiResponse>(){
+                    .subscribeWith(object : DisposableSingleObserver<ApiResponse>() {
                         override fun onSuccess(response: ApiResponse) {
                             LoadingDialogCancel()
-                           getAllInvitations(context)
+                            getAllInvitations(context)
                         }
 
                         override fun onError(e: Throwable) {
@@ -293,25 +362,53 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             )
         }
     }
+
     val invitationListener = object : ValueEventListener {
 
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            context?.let { c->
-               getAllInvitations(c)
+            context?.let { c ->
+                getAllInvitations(c)
             }
         }
 
         override fun onCancelled(databaseError: DatabaseError) {}
     }
-    private fun addInvitationListener(){
-        currentUser?.let {u->
-            dbRef.child("Invitations").child(u.username.toString()).addValueEventListener(invitationListener)
+
+    private fun addInvitationListener() {
+        currentUser?.let { u ->
+            dbRef.child("Invitations").child(u.username.toString())
+                .addValueEventListener(invitationListener)
         }
 
     }
-    fun removeInvitationListener(){
-        currentUser?.let {u->
-            dbRef.child("Invitations").child(u.username.toString()).removeEventListener(invitationListener)
+
+    fun removeInvitationListener() {
+        currentUser?.let { u ->
+            dbRef.child("Invitations").child(u.username.toString())
+                .removeEventListener(invitationListener)
+        }
+    }
+
+    fun logOut(context:Context,activity: Activity) {
+        currentJwt?.let { jwt->
+            disposable.add(apiService.signOut(jwt)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object :DisposableSingleObserver<ApiResponse>(){
+                    override fun onSuccess(response: ApiResponse) {
+                        launch {
+                            logout(context)
+                            val intent = Intent(activity, MainActivity::class.java)
+                            activity.startActivity(intent)
+                            activity.finish()
+                        }
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                }))
         }
     }
 

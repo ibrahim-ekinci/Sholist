@@ -33,6 +33,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
+import com.gloorystudio.sholist.data.firebase.*
 
 class LoginViewModel : ViewModel() {
     private lateinit var auth: FirebaseAuth
@@ -83,7 +84,7 @@ class LoginViewModel : ViewModel() {
                 LoginWithGoogle(
                     getDeviceId(activity),
                     user!!.email,
-                    getStaticToken()
+                    getSToken()
                 )
             )
                 .subscribeOn(Schedulers.newThread())
@@ -166,8 +167,8 @@ class LoginViewModel : ViewModel() {
         return OneSignal.getDeviceState()?.userId
     }
 
-    private fun getStaticToken(): String {
-        return ""//TODO: RETURNT STATİCID
+    private fun getSToken(): String {
+        return getStaticToken()
     }
 
     private fun saveJwtAndUser(context: Context, jwt: String?, user: User?) {

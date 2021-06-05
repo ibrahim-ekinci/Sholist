@@ -76,4 +76,12 @@
     <string name="please_enter_username">Please enter username.</string>
     <string name="please_enter_list_name">Please enter list name.</string>
     <string name="user_removed">User removed.</string>
+    <string name="please_enter_product_name">Please enter product name.</string>
+    <string name="name_has_been_changed">Name has been changed.</string>
+    <string name="password_has_been_changed">Password has been changed.</string>
+    <string name="logout">Logout</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete_item">Delete Item</string>
+    <string name="are_you_want_delete">Are you sure you want to delete the item?</string>
 </resources>

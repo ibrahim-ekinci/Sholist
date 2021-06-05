@@ -17,6 +17,7 @@ val USER_ID_KEY = stringPreferencesKey("userId")
 val USER_MAIL_KEY = stringPreferencesKey("email")
 val USER_NAME_KEY = stringPreferencesKey("name")
 val USER_USERNAME_KEY = stringPreferencesKey("username")
+val ITEM_VERSION = stringPreferencesKey("itemVersion")
 private const val pwJwt ="VsWa@WjoK#9E1F0a"
 private const val pwUser ="N3ACFtp%v20kwA5b"
 
@@ -58,5 +59,17 @@ suspend fun getUserData(context: Context): User? {
     }
 
 }
-
-
+suspend fun  setItemVersion(context: Context,version:String){
+    context.dataStore.edit { settings ->
+        settings[ITEM_VERSION] = version.encrypt(pwUser)
+    }
+}
+suspend fun getItemVersion(context: Context): String? {
+    val preferences = context.dataStore.data.first()
+    return preferences[ITEM_VERSION]?.decrypt(pwUser)
+}
+suspend fun logout(context: Context){
+     context.dataStore.edit {
+        it.clear()
+    }
+}

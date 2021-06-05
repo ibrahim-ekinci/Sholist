@@ -112,8 +112,16 @@ class SholistApiService {
     }
 
 
-    fun changeName(setNames: SetNames): Single<ApiResponse> {
-        return api.changeName(setNames)
+    fun changeName(jwt:String,newName:String): Single<ApiResponse> {
+        return api.changeName(jwt,newName)
+    }
+
+    fun getTemplateVersion(jwt: String): Single<ApiResponseWithVersion>{
+        return api.getTemplateVersion(jwt)
+    }
+
+    fun getTemplateItems(jwt: String): Single<ApiResponseWithItemList>{
+        return  api.getTemplateItems(jwt)
     }
 
 }

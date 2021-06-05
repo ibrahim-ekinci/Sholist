@@ -16,12 +16,17 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
 
     private var actionFragmentList: ((Int,Item, CheckBox)->Unit)?= null
     private var actionFragmentImageView: ((Item, ImageView)->Unit)?= null
+    private var actionFragmentRemove: ((Int,Item, CheckBox)->Unit)?= null
 
     fun onClickCB(actionFragmentList:(Int,Item, CheckBox)->Unit){
         this.actionFragmentList=actionFragmentList
     }
     fun onClickIV(actionFragmentImageView:(Item, ImageView)->Unit){
         this.actionFragmentImageView=actionFragmentImageView
+    }
+
+    fun onLongClickCB(actionFragmentRemove:(Int ,Item , CheckBox)->Unit){
+        this.actionFragmentRemove=actionFragmentRemove
     }
 
 
@@ -32,7 +37,7 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
         return ShoppingListViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ShoppingListViewHolder, position: Int) =holder.bind(itemList[position],actionFragmentList,actionFragmentImageView)
+    override fun onBindViewHolder(holder: ShoppingListViewHolder, position: Int) =holder.bind(itemList[position],actionFragmentList,actionFragmentImageView,actionFragmentRemove)
 
 
     override fun getItemCount(): Int {
@@ -67,6 +72,14 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
     inner class ShoppingListViewHolder (var binding: ItemShoppingitemBinding):RecyclerView.ViewHolder(binding.root){
 
         init {
+            binding.cbItem.setOnLongClickListener {
+                actionFragmentRemove?.invoke(adapterPosition,itemList[adapterPosition],binding.cbItem)
+                true
+            }
+            binding.cardItem.setOnLongClickListener {
+                actionFragmentRemove?.invoke(adapterPosition,itemList[adapterPosition],binding.cbItem)
+                true
+            }
             binding.cbItem.setOnClickListener {
                 actionFragmentList?.invoke(adapterPosition,itemList[adapterPosition],binding.cbItem)
             }
@@ -78,7 +91,7 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
                 actionFragmentImageView?.invoke(itemList[adapterPosition],binding.ivIcon)
             }
         }
-        fun bind(item: Item, actionFragmentList: ((Int,Item, CheckBox) -> Unit)?, actionFragmentImageView: ((Item, ImageView) -> Unit)?){
+        fun bind(item: Item, actionFragmentList: ((Int,Item, CheckBox) -> Unit)?, actionFragmentImageView: ((Item, ImageView) -> Unit)?, actionFragmentRemove: ((Int,Item, CheckBox) -> Unit)?){
             binding.item=item
             if (itemList[adapterPosition].checked){
                 binding.cbItem.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
