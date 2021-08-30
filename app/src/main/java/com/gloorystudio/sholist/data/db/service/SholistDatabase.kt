@@ -8,7 +8,7 @@ import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.data.db.entity.ShoppingList
 import com.gloorystudio.sholist.data.db.entity.User
 
-
+/*
 @Database(
     entities = [Item::class, ShoppingList::class, User::class],
     version = 1
@@ -39,3 +39,5 @@ abstract class SholistDatabase : RoomDatabase() {
         ).build()
     }
 }
+
+ */

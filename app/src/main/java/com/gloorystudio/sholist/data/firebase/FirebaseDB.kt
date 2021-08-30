@@ -1,6 +1,6 @@
 package com.gloorystudio.sholist.data.firebase
 
-import com.gloorystudio.sholist.currentData.currentUser
+import com.gloorystudio.sholist.CurrentData.currentUser
 import com.gloorystudio.sholist.encrypt
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
@@ -8,12 +8,12 @@ import com.google.firebase.ktx.Firebase
 
 val database = Firebase.database
 
-fun setListVersion(listId:String,version:String){
+fun setListVersion(listId:Int,version:String){
     currentUser?.let {u->
-        database.getReference("Lists").child(listId).child("v").setValue(version)
+        database.getReference("Lists").child(listId.toString()).child("v").setValue(version)
     }
 }
-fun setUserInvitation(username:String,listId: String){
+fun setUserInvitation(username:String,listId: Int){
     currentUser?.let { u->
         database.getReference("Invitations").child(username).setValue(listId)
     }

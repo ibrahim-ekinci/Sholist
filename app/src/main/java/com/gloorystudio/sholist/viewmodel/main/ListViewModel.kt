@@ -1,22 +1,26 @@
 package com.gloorystudio.sholist.viewmodel.main
 
 import android.app.Application
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.gloorystudio.sholist.*
-import com.gloorystudio.sholist.currentData.currentJwt
+import androidx.lifecycle.viewModelScope
+import com.gloorystudio.sholist.CurrentData.currentJwt
+import com.gloorystudio.sholist.LoadingDialogCancel
+import com.gloorystudio.sholist.LoadingDialogShow
+import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.data.api.model.Item.DeleteItem
 import com.gloorystudio.sholist.data.api.model.Item.Items
 import com.gloorystudio.sholist.data.api.model.Item.PatchItem
 import com.gloorystudio.sholist.data.api.model.Item.PostItem
-import com.gloorystudio.sholist.data.api.model.response.ApiResponse
-import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithItem
-import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithShoppingCard
-import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithShoppingCardAndItemList
+import com.gloorystudio.sholist.data.api.model.response.*
+import com.gloorystudio.sholist.data.api.model.shoppingcard.DeleteShoppingCard
 import com.gloorystudio.sholist.data.api.service.SholistApiService
 import com.gloorystudio.sholist.data.db.entity.Item
-import com.gloorystudio.sholist.data.db.service.SholistDatabase
+import com.gloorystudio.sholist.data.firebase.setListVersion
+import com.gloorystudio.sholist.model.DefItem
 import com.gloorystudio.sholist.model.ShoppingCard
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,7 +32,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
-import com.gloorystudio.sholist.data.firebase.*
 import java.util.*
 
 
@@ -60,22 +63,26 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
         currentJwt?.let { jwt ->
             shoppingCard?.let { shoppingCard ->
                 LoadingDialogShow(context)
-                println("updatefROM APİ")
                 disposable.add(apiService.getShoppingCard(jwt, shoppingCard.id)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(object :
                         DisposableSingleObserver<ApiResponseWithShoppingCard>() {
                         override fun onSuccess(response: ApiResponseWithShoppingCard) {
-                            updateDataToSQLite(response.shoppingCard)
+                            //updateDataToSQLite(response.shoppingCard)
+                            items.value = response.shoppingCard.itemList
                             LoadingDialogCancel()
 
                         }
 
                         override fun onError(e: Throwable) {
-                            Toast.makeText(getApplication(), e.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                getApplication(),
+                                "updateDataFromApi" + e.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
                             LoadingDialogCancel()
-                            readFromSQLite(shoppingCard)
+                            // readFromSQLite(shoppingCard)
                         }
                     }
                     )
@@ -83,7 +90,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
             }
         }
     }
-
+/*
     private fun updateDataToSQLite(shoppingCard: ShoppingCard) {
         launch {
             val dao = SholistDatabase(getApplication()).sholistDao()
@@ -92,6 +99,8 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
             readFromSQLite(shoppingCard)
         }
     }
+
+ */
 
     val listener = object : ValueEventListener {
 
@@ -104,56 +113,66 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
         override fun onCancelled(databaseError: DatabaseError) {}
     }
 
-    private fun readFromSQLite(sData: ShoppingCard) {
-        launch {
-            println("readData")
-            val dao = SholistDatabase(getApplication()).sholistDao()
-            val data = dao.getShoppingListWithItemsAndUsers(sData.id)
-            items.value = data.items
-            shoppingCard = data.toModel()
-        }
-    }
+    /*
+        private fun readFromSQLite(sData: ShoppingCard) {
+            launch {
+                println("readData")
+                val dao = SholistDatabase(getApplication()).sholistDao()
+                val data = dao.getShoppingListWithItemsAndUsers(sData.id)
 
-    private fun addListener(id: String) {
-        dbRef.child("Lists").child(id).child("v").addValueEventListener(listener)
+                items.value = data.items
+                shoppingCard = data.toModel()
+            }
+        }
+
+
+     */
+    private fun addListener(id: Int) {
+        dbRef.child("Lists").child(id.toString()).child("v").addValueEventListener(listener)
     }
 
     fun removeListener() {
         shoppingCard?.let {
-            dbRef.child("Lists").child(it.id).child("v").removeEventListener(listener)
+            dbRef.child("Lists").child(it.id.toString()).child("v").removeEventListener(listener)
             println("removeListener")
         }
     }
 
-    fun addItem(context: Context, itemName: String, count: Int) {
+    fun addItem(context: Context, itemName: String, count: Int, done: (isSucces: Boolean) -> Unit) {
         currentJwt?.let { jwt ->
             shoppingCard?.let { shoppingCard ->
                 LoadingDialogShow(context)
-                val item = Items(count,itemName,R.drawable.shop)
-                disposable.add(apiService.postItem(PostItem(item, jwt, shoppingCard.id))
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object :
-                        DisposableSingleObserver<ApiResponseWithShoppingCardAndItemList>() {
-                        override fun onSuccess(t: ApiResponseWithShoppingCardAndItemList) {
-                            LoadingDialogCancel()
-                            updateDataToSQLite(t.shoppingCard)
-                            setListVersion(t.shoppingCard.id,UUID.randomUUID().toString())
-                        }
+                val newList: ArrayList<Items> = arrayListOf()
+                newList.add(Items(count, itemName, R.drawable.shop))
+                disposable.add(
+                    apiService.postItem(PostItem(newList, jwt, shoppingCard.id))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(object :
+                            DisposableSingleObserver<ApiResponseWithShoppingCardAndItemList>() {
+                            override fun onSuccess(t: ApiResponseWithShoppingCardAndItemList) {
+                                LoadingDialogCancel()
+                                //updateDataToSQLite(t.shoppingCard)
+                                updateDataFromApi(context)
+                                setListVersion(t.shoppingCard.id, UUID.randomUUID().toString())
+                                done.invoke(true)
+                            }
 
-                        override fun onError(e: Throwable) {
-                            LoadingDialogCancel()
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                        }
-                    })
+                            override fun onError(e: Throwable) {
+                                done.invoke(false)
+                                LoadingDialogCancel()
+                                Toast.makeText(context, "addItem" + e.message, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        })
                 )
             }
         }
     }
 
     fun setIcon(context: Context, item: Item, icon: Int) {
-        currentJwt?.let { jwt->
-            shoppingCard?.let {shoppingCard ->
+        currentJwt?.let { jwt ->
+            shoppingCard?.let { shoppingCard ->
                 //LoadingDialogShow(context)
                 //TODO:SetIcon
             }
@@ -161,7 +180,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun editList(context: Context, name: String, color: Int) {
-        currentJwt?.let { jwt->
+        currentJwt?.let { jwt ->
             shoppingCard?.let { shoppingCard ->
                 //LoadingDialogShow(context)
                 //TODO:EDİTLİST
@@ -170,46 +189,116 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun deleteItem(context: Context, item: Item) {
-        currentJwt?.let { jwt->
+        currentJwt?.let { jwt ->
+            Log.d(TAG, "deleteItem: jwt:$jwt - itemid:${item.id}")
             disposable.addAll(
-                apiService.deleteItem(DeleteItem(item.id,jwt))
-                    .observeOn(Schedulers.newThread())
+                apiService.deleteItem(DeleteItem(item.id, jwt))
+                    .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object :DisposableSingleObserver<ApiResponse>(){
+                    .subscribeWith(object : DisposableSingleObserver<ApiResponse>() {
                         override fun onSuccess(t: ApiResponse) {
-                            launch {
-                                val dao = SholistDatabase(getApplication()).sholistDao()
-                                dao.deleteItem(item.id)
+                            viewModelScope.launch {
+                                item.shoppingListId?.let {
+                                    setListVersion(
+                                        it,
+                                        UUID.randomUUID().toString()
+                                    )
+                                }
                                 updateDataFromApi(context)
-                                item.shoppingListId?.let { setListVersion(it,UUID.randomUUID().toString()) }
                             }
                         }
 
                         override fun onError(e: Throwable) {
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "deleteItem fail message:" + e.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-
                     })
             )
         }
     }
 
-    fun updateItemChecked(requireContext: Context, item: Item, checked: Boolean) {
-        currentJwt?.let {jwt->
-            disposable.add(apiService.patchItem(PatchItem(checked,item.id,jwt))
+    fun deleteList(context: Context, shoppingCardId: Int, done: (isSucces: Boolean) -> Unit) {
+        currentJwt?.let { jwt ->
+            disposable.add(apiService.deleteShoppigCard(DeleteShoppingCard(jwt, shoppingCardId))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object :DisposableSingleObserver<ApiResponseWithItem>(){
-                    override fun onSuccess(t: ApiResponseWithItem) {
-                        item.shoppingListId?.let { setListVersion(it,UUID.randomUUID().toString()) }
+                .subscribeWith(object : DisposableSingleObserver<ApiResponseWithShoppingCard>() {
+                    override fun onSuccess(t: ApiResponseWithShoppingCard) {
+                        done.invoke(true)
                     }
 
                     override fun onError(e: Throwable) {
-                        Toast.makeText(context,e.message, Toast.LENGTH_SHORT).show()
+                        done.invoke(false)
+                        Toast.makeText(
+                            context,
+                            "deleteList fail message:" + e.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
-                }))
+                })
+            )
+
         }
+    }
+
+    fun updateItemChecked(requireContext: Context, item: Item, checked: Boolean ,done:(isSuccess: Boolean)->Unit) {
+        currentJwt?.let { jwt ->
+            disposable.add(apiService.patchItem(PatchItem(checked, item.id, jwt))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<ApiResponseWithItem>() {
+                    override fun onSuccess(t: ApiResponseWithItem) {
+                        done.invoke(true)
+                        item.shoppingListId?.let {
+                            done.invoke(true)
+                            setListVersion(
+                                it,
+                                UUID.randomUUID().toString()
+                            )
+                        }
+                    }
+
+                    override fun onError(e: Throwable) {
+                        done.invoke(false)
+                        Toast.makeText(
+                            context,
+                            "updateItemChecked" + e.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                })
+            )
+        }
+    }
+
+    fun getTemplateItems(done: (itemList: List<DefItem>?) -> Unit) {
+        currentJwt?.let { jwt ->
+            disposable.add(apiService.getTemplateItems(jwt)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<ApiResponseWithItemList>() {
+                    override fun onSuccess(t: ApiResponseWithItemList) {
+                        done.invoke(t.items)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Toast.makeText(
+                            context,
+                            "getTemplateItems" + e.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                })
+            )
+
+        }
+
     }
 }
 

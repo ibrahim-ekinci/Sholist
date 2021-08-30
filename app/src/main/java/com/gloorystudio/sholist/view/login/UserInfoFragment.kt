@@ -8,7 +8,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.data.api.model.auth.SetNames
 import com.gloorystudio.sholist.databinding.FragmentUserInfoBinding
@@ -51,11 +50,7 @@ class UserInfoFragment : Fragment() {
             else if(binding.etUnUsername.text.toString().length<3){
                 binding.textInputLayoutUsername.error=requireContext().getString(R.string.username_must_be_least_4_char)
             } else{
-                //todo:Remove navigate
-                UserInfoFragmentDirections.actionUserInfoFragmentToVerificationFragment(email)
-                    .Go(it)
-
-                viewModel.setName(
+                viewModel.setName(it,
                     requireContext(), SetNames(
                         email,
                         tempToken,

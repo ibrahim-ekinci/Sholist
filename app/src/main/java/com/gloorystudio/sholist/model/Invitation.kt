@@ -9,9 +9,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Invitation(
-    val id:String,
-    val shoppingCardId:String,
+    val id:Int,
+    val shoppingCardId:Int,
     val groupName:String,
-    val senderUsername:String,
-    val date:String
+    val senderUsername:String
 ): Parcelable

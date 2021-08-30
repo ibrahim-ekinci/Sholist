@@ -9,13 +9,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.gloorystudio.sholist.R
+import com.gloorystudio.sholist.base.BaseFragment
 import com.gloorystudio.sholist.databinding.FragmentSettingsBinding
 import com.gloorystudio.sholist.isNameTrue
 import com.gloorystudio.sholist.isPasswordTrue
 import com.gloorystudio.sholist.viewmodel.main.SettingsViewModel
 
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : BaseFragment() {
 
     private lateinit var binding: FragmentSettingsBinding
     private lateinit var viewModel: SettingsViewModel

@@ -7,19 +7,12 @@ import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity
 data class Item(
-    @ColumnInfo(name="id")
-    val id: String,
-    @ColumnInfo(name="shoppingListId")
-    val shoppingListId: String?,
-    @ColumnInfo(name="name")
+    val id: Int,
+    val shoppingListId: Int?,
     val name: String,
-    @ColumnInfo(name="count")
     val count: Int,
-    @ColumnInfo(name="checked")
-    val checked: Boolean,
-    @ColumnInfo(name="img")
+    var checked: Boolean,
     val img: Int
 ): Parcelable {
     @PrimaryKey(autoGenerate = true)

@@ -1,18 +1,14 @@
 package com.gloorystudio.sholist.adapter
 
 import android.graphics.Paint
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.ItemShoppingcardBinding
 import com.gloorystudio.sholist.model.ShoppingCard
-import com.gloorystudio.sholist.view.main.MainFragmentDirections
-
 
 
 class ShoppingCardAdapter(private val ShoppingCardList :ArrayList<ShoppingCard>):RecyclerView.Adapter<ShoppingCardAdapter.ShoppingCardViewHolder>(){

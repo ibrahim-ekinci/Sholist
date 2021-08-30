@@ -8,9 +8,9 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ShoppingCard(
-    var id: String,
+    var id: Int,
     var name: String,
-    var creatorId: String,
+    var creatorId: Int,
     var color: Int,
     var userList: ArrayList<User>,
     var itemList: ArrayList<Item>

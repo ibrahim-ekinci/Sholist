@@ -10,9 +10,9 @@ import kotlinx.android.parcel.Parcelize
 @Entity
 data class User(
     @ColumnInfo(name="id")
-    val id: String,
+    val id: Int,
     @ColumnInfo(name="shoppingListId")
-    val shoppingListId: String?,
+    val shoppingListId: Int?,
     @ColumnInfo(name="email")
     val email: String?,
     @ColumnInfo(name="verification")

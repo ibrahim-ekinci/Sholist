@@ -1,15 +1,14 @@
 package com.gloorystudio.sholist.viewmodel.login
 
 import android.content.Context
-import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import com.gloorystudio.sholist.Go
-import com.gloorystudio.sholist.LoadingDialogCancel
-import com.gloorystudio.sholist.LoadingDialogShow
+import com.gloorystudio.sholist.*
 import com.gloorystudio.sholist.data.api.model.auth.SignUp
 import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithTt
 import com.gloorystudio.sholist.data.api.service.SholistApiService
+import com.gloorystudio.sholist.data.api.*
+import com.gloorystudio.sholist.databinding.FragmentRegisterBinding
 import com.gloorystudio.sholist.view.login.RegisterFragmentDirections
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -25,7 +24,7 @@ class RegisterViewModel : ViewModel() {
         disposable.clear()
     }
 
-    fun signUp(btn: View, context: Context, email: String, pass: String) {
+    fun signUp(binding: FragmentRegisterBinding, context: Context, email: String, pass: String) {
         LoadingDialogShow(context)
 
         disposable.add(
@@ -40,12 +39,23 @@ class RegisterViewModel : ViewModel() {
                             "",
                             response.tempToken!!,
                             email
-                        ).Go(btn)
+                        ).go(binding.btnRegister)
                     }
 
                     override fun onError(e: Throwable) {
                         LoadingDialogCancel()
-                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                        e.isHttpExc { code ->
+                            when (code) {
+                                ErrorCode.EXIST_DATA_422->{
+                                    binding.textInputLayoutEmail.error=context.getString(R.string.email_allready_registred)
+                                }
+                                ErrorCode.INVALID_JSON_400 -> ""
+                                ErrorCode.INVALID_PERMISSION_403 -> ""
+                                ErrorCode.SERVER_ERROR_500 -> ""
+                                else -> Toast.makeText(context, e.message, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
                     }
 
                 })

@@ -9,25 +9,21 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.gloorystudio.sholist.*
-import com.gloorystudio.sholist.currentData.currentJwt
-import com.gloorystudio.sholist.currentData.currentUser
+import com.gloorystudio.sholist.CurrentData.currentJwt
+import com.gloorystudio.sholist.CurrentData.currentUser
 import com.gloorystudio.sholist.data.api.model.invitation.PatchInvitation
 import com.gloorystudio.sholist.data.api.model.response.*
 import com.gloorystudio.sholist.data.api.model.shoppingcard.PostShoppingCard
 import com.gloorystudio.sholist.data.api.service.SholistApiService
 import com.gloorystudio.sholist.data.db.entity.Item
-import com.gloorystudio.sholist.data.db.entity.ShoppingList
 import com.gloorystudio.sholist.data.db.entity.User
-import com.gloorystudio.sholist.data.db.service.SholistDatabase
 import com.gloorystudio.sholist.data.getItemVersion
 import com.gloorystudio.sholist.data.logout
 import com.gloorystudio.sholist.data.setItemVersion
 import com.gloorystudio.sholist.model.DefItem
 import com.gloorystudio.sholist.model.Invitation
 import com.gloorystudio.sholist.model.ShoppingCard
-import com.gloorystudio.sholist.view.main.MainActivity
-import com.gloorystudio.sholist.view.main.MainFragment
-import com.gloorystudio.sholist.view.main.MainFragmentDirections
+import com.gloorystudio.sholist.view.login.LoginActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -38,54 +34,33 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
-import java.util.*
+import retrofit2.HttpException
 import kotlin.collections.ArrayList
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
-    val ShoppingCards = MutableLiveData<List<ShoppingCard>>()
-    val ShoppingCardsError = MutableLiveData<Boolean>()
-    val ShoppingCardsLoading = MutableLiveData<Boolean>()
-    val ShoppingCardsIsEmpty = MutableLiveData<Boolean>()
+    val shoppingCards = MutableLiveData<List<ShoppingCard>>()
+    val shoppingCardsError = MutableLiveData<Boolean>()
+    val shoppingCardsLoading = MutableLiveData<Boolean>()
+    val shoppingCardsIsEmpty = MutableLiveData<Boolean>()
 
-    val Invitations = MutableLiveData<List<Invitation>>()
-    val InvitationsError = MutableLiveData<Boolean>()
-    val InvitationsLoading = MutableLiveData<Boolean>()
-    val InvitationsIsEmpty = MutableLiveData<Boolean>()
+    val invitations = MutableLiveData<List<Invitation>>()
+    val invitationsError = MutableLiveData<Boolean>()
+    val invitationsLoading = MutableLiveData<Boolean>()
+    val invitationsIsEmpty = MutableLiveData<Boolean>()
 
     private val apiService = SholistApiService()
     private val disposable = CompositeDisposable()
     private val dbRef = Firebase.database.reference
-    var context: Context? = null
+    private var context: Context? = null
+    private var activity: Activity? = null
 
-/*
-    private lateinit var forRemoveListenershoppingLists: ArrayList<ShoppingCard>
-    private val listener = object : ValueEventListener {
-        var isFirstListening = true
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            println("getdata firebase$isFirstListening")
-            if (isFirstListening.not()) getAllDataFromApi(false)
-            isFirstListening = false
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {}
-    }
-
- */
 
     override fun onCleared() {
-        super.onCleared()
         disposable.clear()
-
-        /*
-        if (this::forRemoveListenershoppingLists.isInitialized){
-            removeListener(forRemoveListenershoppingLists)
-        }
-
-         */
-
+        super.onCleared()
     }
 
-    fun refreshShoppingCardsData(context: Context) {
+    fun refreshShoppingCardsData(context: Context,activity: Activity) {
         var sList: ArrayList<ShoppingCard> = ArrayList<ShoppingCard>()
         var itemList: ArrayList<Item> = ArrayList<Item>()
         var userList: ArrayList<User> = ArrayList<User>()
@@ -95,55 +70,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         itemList.clear()
         sList.clear()
 
-        userList.add(
-            User(
-                "1",
-                "1",
-                "asd@asd.com.tr",
-                true,
-                "Halil İbrahim Ekinci",
-                "ibrahim",
-                "1",
-                true
-            )
-        )
-        userList.add(
-            User(
-                "2",
-                "1",
-                "asd@asd.com.tr",
-                true,
-                "Yunus Emre Bulut",
-                "yunusemre",
-                "2",
-                true
-            )
-        )
-        userList.add(User("3", "1", "asd@asd.com.tr", true, "Hilal Tokgöz", "hilal", "3", false))
-        userList.add(User("4", "1", "asd@asd.com.tr", true, "Recep Yeşikaya", "recep", "4", false))
-
-        itemList.add(Item("1", "1", "Ekmek", 2, true, R.drawable.shop))
-        itemList.add(Item("2", "1", "Elma", 3, true, R.drawable.shop))
-        itemList.add(Item("3", "1", "Armut", 1, true, R.drawable.shop))
-        itemList.add(Item("4", "1", "Muz", 1, true, R.drawable.shop))
-        itemList.add(Item("5", "1", "Cips", 1, false, R.drawable.shop))
-        itemList.add(Item("7", "1", "Kraker", 1, false, R.drawable.shop))
-        itemList.add(Item("8", "1", "Selpak", 1, false, R.drawable.shop))
-        itemList.add(Item("9", "1", "Su", 2, false, R.drawable.shop))
-        itemList.add(Item("10", "1", "Kola", 2, false, R.drawable.shop))
-
-        sList.add(ShoppingCard("1", "My Shoping List", "1", 1, userList, itemList))
-        //   sList.add(ShoppingCard("2", "My Shoping List1", "1", 1, userList, itemList))
-        //  sList.add(ShoppingCard("3", "My Shoping List2", "1", 2, userList, itemList))
-        //  sList.add(ShoppingCard("4", "My Shoping List3", "1", 3, userList, itemList))
-        //  sList.add(ShoppingCard("5", "My Shoping List4", "1", 4, userList, itemList))
-
         getAllData()
-        //updateAllListInSQLite(sList)
-        //readFromSQLite(true)
-        ShoppingCardsError.value = false
-        ShoppingCardsIsEmpty.value = sList.isEmpty()
-        ShoppingCardsLoading.value = false
+        shoppingCardsError.value = false
+        shoppingCardsIsEmpty.value = sList.isEmpty()
+        shoppingCardsLoading.value = false
     }
 
     private fun checkDefaultItemList(context: Context) {
@@ -171,7 +101,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         }
 
                         override fun onError(e: Throwable) {
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "checkVersion:"+ e.message, Toast.LENGTH_SHORT).show()
                         }
 
                     })
@@ -191,7 +121,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     }
 
                     override fun onError(e: Throwable) {
-                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "updateDefaultItems:"+e.message, Toast.LENGTH_SHORT).show()
                     }
 
                 }
@@ -201,10 +131,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun updateLocalDefaultItems(context: Context,version: Int, items: List<DefItem>) {
-        launch {
-            val dao = SholistDatabase(getApplication()).sholistDao()
-            dao.updateDefaulItemList(items.toEntity())
-            setItemVersion(context,version.toString())
+        viewModelScope.launch {
+            items?.let {
+                setItemVersion(context,version.toString())
+            }
+
         }
     }
 
@@ -218,13 +149,17 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     .subscribeWith(object : DisposableSingleObserver<ApiResponseWithInvitation>() {
                         override fun onSuccess(response: ApiResponseWithInvitation) {
                             LoadingDialogCancel()
-                            Invitations.value = response.requests
-                            InvitationsIsEmpty.value = response.requests.isEmpty()
+                            invitations.value = response.requests
+                            invitationsIsEmpty.value = response.requests.isEmpty()
                         }
 
                         override fun onError(e: Throwable) {
                             LoadingDialogCancel()
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"getAllInvitations:"+ e.message, Toast.LENGTH_SHORT).show()
+                            viewModelScope.launch {
+                                logout(context)
+                            }
+
                         }
 
                     })
@@ -233,8 +168,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun createNewListWithApi(context: Context, name: String, color: Int, dialog: Dialog) {
+        println("test3")
         currentJwt?.let { jwt ->
+            println("JWT:$jwt")
             LoadingDialogShow(context)
+            println("test2")
             disposable.add(
                 apiService.postShoppingCard(PostShoppingCard(color, jwt, name))
                     .subscribeOn(Schedulers.newThread())
@@ -243,12 +181,17 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         DisposableSingleObserver<ApiResponseWithShoppingCard>() {
                         override fun onSuccess(t: ApiResponseWithShoppingCard) {
                             LoadingDialogCancel()
-                            createNewListToSqlite(t.shoppingCard.toEntity().shoppingList, true)
+                            //createNewListToSqlite(t.shoppingCard.toEntity().shoppingList, true)
+                            dialog.cancel()
+                            getAllData()
+                            println("test1")
                         }
 
                         override fun onError(e: Throwable) {
                             LoadingDialogCancel()
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+
+                            Toast.makeText(context, "createNewListWithApi"+e.message, Toast.LENGTH_SHORT).show()
+                            /*
                             currentUser?.let { user ->
                                 val shoppingList = ShoppingList(
                                     UUID.randomUUID().toString(),
@@ -259,6 +202,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                                 //createNewListToSqlite(shoppingList,false)
                                 //todo: internet yokken liste oluşturma yapılacak.
                             }
+
+                             */
                         }
 
                     })
@@ -266,6 +211,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /*
     private fun createNewListToSqlite(shoppingList: ShoppingList, isSync: Boolean) {
         launch {
             val dao = SholistDatabase(getApplication()).sholistDao()
@@ -275,6 +221,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+     */
+
     private fun getAllData() {
         getAllDataFromApi()
     }
@@ -282,7 +230,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     private fun getAllDataFromApi() {
         currentJwt?.let { jwt ->
-            ShoppingCardsLoading.value = true
+            shoppingCardsLoading.value = true
             disposable.add(
                 apiService.getShoppingCardAll(jwt)
                     .subscribeOn(Schedulers.newThread())
@@ -290,15 +238,27 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     .subscribeWith(object :
                         DisposableSingleObserver<ApiResponseWithShoppingCardList>() {
                         override fun onSuccess(response: ApiResponseWithShoppingCardList) {
-                            updateAllListInSQLite(response.shoppingCard)
-                            ShoppingCardsLoading.value = false
+                            //updateAllListInSQLite(response.shoppingCard)
+                            shoppingCards.value=response.shoppingCards
+                            shoppingCardsLoading.value = false
                             println("api succes")
                         }
 
                         override fun onError(e: Throwable) {
-                            readFromSQLite()
-                            ShoppingCardsLoading.value = false
-                            println("api fail")
+                            //readFromSQLite()
+                            shoppingCardsLoading.value = false
+                            if(e is HttpException){
+                                when(e.code()){
+                                    403->{
+                                        activity?.let {
+                                            val intent = Intent(it, LoginActivity::class.java)
+                                            it.startActivity(intent)
+                                            it.finish()
+                                            logOut(it,it)
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                     })
@@ -307,26 +267,21 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun refreshInvitationsData(context: Context) {
-        var invitationList: ArrayList<Invitation> = ArrayList<Invitation>()
-        invitationList.add(Invitation("1", "", "Alınacaklar", "İbrahim", "26.25.2020"))
-        invitationList.add(Invitation("2", "", "Bim", "Yunus Emre", "26.25.2020"))
-        invitationList.add(Invitation("3", "", "A-101", "Recep", "26.25.2020"))
-        invitationList.add(Invitation("4", "", "Dükkan", "Hilal", "26.25.2020"))
         this.context = context
         addInvitationListener()
-        Invitations.value = invitationList
     }
 
-
+/*
     private fun updateAllListInSQLite(sList: List<ShoppingCard>) {
         launch {
             val dao = SholistDatabase(getApplication()).sholistDao()
-            for (shoppingCard in sList) {//Clear room
-                dao.deleteShoppnigListWithItemsAndUsers(shoppingCard.id)
+            sList?.let{
+                for (shoppingCard in sList) {//Clear room
+                    dao.deleteShoppnigListWithItemsAndUsers(shoppingCard.id)
+                }
+                dao.insertAllShoppingListWithItemsAndUsers(ArrayList(sList).toEntity())
+                readFromSQLite()
             }
-            dao.insertAllShoppingListWithItemsAndUsers(ArrayList(sList).toEntity())
-
-            readFromSQLite()
         }
     }
 
@@ -338,7 +293,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
         }
     }
-
+*/
     fun invitationAccept(context: Context, isAccept: Boolean, invation: Invitation) {
         currentJwt?.let { jwt ->
             LoadingDialogShow(context)
@@ -354,7 +309,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
                         override fun onError(e: Throwable) {
                             LoadingDialogCancel()
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "invitationAccept"+e.message, Toast.LENGTH_SHORT).show()
                         }
 
                     })
@@ -396,42 +351,26 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object :DisposableSingleObserver<ApiResponse>(){
                     override fun onSuccess(response: ApiResponse) {
-                        launch {
+                        viewModelScope.launch {
                             logout(context)
-                            val intent = Intent(activity, MainActivity::class.java)
-                            activity.startActivity(intent)
+                            val intent = Intent(context, LoginActivity::class.java)
+                            context.startActivity(intent)
                             activity.finish()
                         }
                     }
 
                     override fun onError(e: Throwable) {
-                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "logOut"+e.message, Toast.LENGTH_SHORT).show()
+                        viewModelScope.launch {
+                            logout(context)
+                            val intent = Intent(context, LoginActivity::class.java)
+                            context.startActivity(intent)
+                            activity.finish()
+                        }
                     }
 
                 }))
         }
     }
-
-/*
-    private fun listenVersion(shoppingLists: ArrayList<ShoppingCard>) {
-        val dbRef = Firebase.database.reference
-        for (shoppingList in shoppingLists) {
-            dbRef.child("Lists").child(shoppingList.id).child("v").addValueEventListener(listener)
-            println("add listener")
-        }
-
-    }
-    private fun removeListener(shoppingLists: ArrayList<ShoppingCard>){
-        val dbRef = Firebase.database.reference
-        for (shoppingList in shoppingLists) {
-            dbRef.child("Lists").child(shoppingList.id).child("v").removeEventListener(listener)
-            println("removed listener ")
-        }
-        forRemoveListenershoppingLists=shoppingLists
-    }
-
-
- */
-
 
 }

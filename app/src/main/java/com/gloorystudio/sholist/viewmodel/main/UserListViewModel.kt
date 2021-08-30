@@ -8,21 +8,19 @@ import androidx.lifecycle.MutableLiveData
 import com.gloorystudio.sholist.LoadingDialogCancel
 import com.gloorystudio.sholist.LoadingDialogShow
 import com.gloorystudio.sholist.R
-import com.gloorystudio.sholist.currentData.currentJwt
+import com.gloorystudio.sholist.CurrentData.currentJwt
 import com.gloorystudio.sholist.data.api.model.invitation.DeleteInvitation
 import com.gloorystudio.sholist.data.api.model.invitation.PostInvitation
 import com.gloorystudio.sholist.data.api.model.response.ApiResponse
 import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithShoppingCard
 import com.gloorystudio.sholist.data.api.service.SholistApiService
 import com.gloorystudio.sholist.data.db.entity.User
-import com.gloorystudio.sholist.data.db.service.SholistDatabase
 import com.gloorystudio.sholist.model.ShoppingCard
 import com.gloorystudio.sholist.data.firebase.setUserInvitation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.launch
 
 class UserListViewModel(application: Application) : BaseViewModel(application) {
     val users = MutableLiveData<List<User>>()
@@ -51,20 +49,19 @@ class UserListViewModel(application: Application) : BaseViewModel(application) {
                 LoadingDialogShow(context)
                 disposable.add(
                     apiService.getShoppingCard(jwt, shoppingCard.id)
-                        .subscribeOn(
-                            Schedulers.newThread()
-                        )
+                        .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(object :
                             DisposableSingleObserver<ApiResponseWithShoppingCard>() {
                             override fun onSuccess(response: ApiResponseWithShoppingCard) {
                                 LoadingDialogCancel()
-                                updateDataToSqlite(response.shoppingCard)
+                               // updateDataToSqlite(response.shoppingCard)
+                                users.value =response.shoppingCard.userList
                             }
 
                             override fun onError(e: Throwable) {
                                 LoadingDialogCancel()
-                                readUserDataFromSqlite(shoppingCard)
+                                //readUserDataFromSqlite(shoppingCard)
                             }
 
                         })
@@ -72,9 +69,9 @@ class UserListViewModel(application: Application) : BaseViewModel(application) {
             }
         }
     }
-
+/*
     private fun updateDataToSqlite(shoppingCard: ShoppingCard) {
-        launch {
+        viewModelScope.launch {
             val dao = SholistDatabase(getApplication()).sholistDao()
             dao.deleteAllUser(shoppingCard.id)
             dao.insertAllUser(shoppingCard.userList)
@@ -83,11 +80,13 @@ class UserListViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun readUserDataFromSqlite(shoppingCard: ShoppingCard) {
-        launch {
+        viewModelScope.launch {
             val dao = SholistDatabase(getApplication()).sholistDao()
             users.value = dao.getAllUser(shoppingCard.id)
         }
     }
+
+ */
 
     fun addNewUser(context: Context, username: String, dialog: Dialog) {
         currentJwt?.let { jwt ->
@@ -95,9 +94,7 @@ class UserListViewModel(application: Application) : BaseViewModel(application) {
                 LoadingDialogShow(context)
                 disposable.add(
                     apiService.postInvitation(PostInvitation(jwt, shoppingCard.id, username))
-                        .subscribeOn(
-                            Schedulers.newThread()
-                        )
+                        .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(object :
                             DisposableSingleObserver<ApiResponse>() {

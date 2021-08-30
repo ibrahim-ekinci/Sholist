@@ -4,10 +4,8 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.gloorystudio.sholist.R
-import com.gloorystudio.sholist.currentData
-import com.gloorystudio.sholist.currentData.currentJwt
+import com.gloorystudio.sholist.CurrentData.currentJwt
 import com.gloorystudio.sholist.data.api.model.auth.ChangePassword
-import com.gloorystudio.sholist.data.api.model.auth.SetNames
 import com.gloorystudio.sholist.data.api.model.response.ApiResponse
 import com.gloorystudio.sholist.data.api.service.SholistApiService
 import io.reactivex.android.schedulers.AndroidSchedulers

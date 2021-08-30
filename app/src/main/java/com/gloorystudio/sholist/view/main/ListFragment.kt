@@ -2,8 +2,10 @@ package com.gloorystudio.sholist.view.main
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ContentValues.TAG
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,25 +14,24 @@ import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gloorystudio.sholist.Go
+import com.gloorystudio.sholist.go
 import com.gloorystudio.sholist.R
-import com.gloorystudio.sholist.adapter.IconAdapter
 import com.gloorystudio.sholist.adapter.ShoppingListAdapter
-import com.gloorystudio.sholist.currentData
-import com.gloorystudio.sholist.currentData.currentUser
+import com.gloorystudio.sholist.CurrentData.currentUser
+import com.gloorystudio.sholist.base.BaseFragment
 import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.databinding.DialogAddItemBinding
 import com.gloorystudio.sholist.databinding.DialogNewlistBinding
-import com.gloorystudio.sholist.databinding.DialogSetIconBinding
 import com.gloorystudio.sholist.databinding.FragmentListBinding
+import com.gloorystudio.sholist.getCheckedText
 import com.gloorystudio.sholist.model.ShoppingCard
 import com.gloorystudio.sholist.viewmodel.main.ListViewModel
 
 
-class ListFragment : Fragment() {
+class ListFragment :BaseFragment() {
 
     private lateinit var viewModel: ListViewModel
     private val shoppinglistAdapter = ShoppingListAdapter(arrayListOf())
@@ -59,6 +60,7 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var shoppingCard: ShoppingCard? = null
+        viewModel = ViewModelProvider(this).get(ListViewModel::class.java)
         arguments?.let {
             val myArgs = ListFragmentArgs.fromBundle(it)
             shoppingCard = myArgs.ShoppingCard
@@ -66,6 +68,7 @@ class ListFragment : Fragment() {
         }
         shoppingCard?.let { shoppingCardData ->
             val color = shoppingCardData.color
+            Log.d(TAG, "onViewCreated: id:"+shoppingCardData.id)
             when (color) { //Set Bg Color
                 1 -> {
                     val color = ContextCompat.getColor(binding.clList.context, R.color.card_bg1)
@@ -89,13 +92,13 @@ class ListFragment : Fragment() {
             binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_item_edit_list -> {
-
+                    binding.ivEdit.performClick()
                 }
                 R.id.menu_item_user_list -> {
-
+                    binding.ivPeoples.performClick()
                 }
                 R.id.menu_item_remove -> {
-
+                    removeList(shoppingCard?.id)
                 }
                 R.id.menu_item_leave -> {
 
@@ -108,51 +111,29 @@ class ListFragment : Fragment() {
                 if (user.id==shoppingCardData.creatorId){
                     binding.topAppBar.menu.findItem(R.id.menu_item_remove).setVisible(true)
                     binding.topAppBar.menu.findItem(R.id.menu_item_leave).setVisible(false)
-                    binding.topAppBar.menu.findItem(R.id.menu_item_edit_list).setVisible(true)
+                    binding.topAppBar.menu.findItem(R.id.menu_item_edit_list).setVisible(false)
                 }else{
                     binding.topAppBar.menu.findItem(R.id.menu_item_remove).setVisible(false)
                     binding.topAppBar.menu.findItem(R.id.menu_item_leave).setVisible(true)
                     binding.topAppBar.menu.findItem(R.id.menu_item_edit_list).setVisible(false)
                 }
             }
-            binding.floatingActionButton.setOnClickListener {
+            viewModel.getTemplateItems { itemList->
+                 binding.floatingActionButton.setOnClickListener {
                 //Todo: show add item dialog
-                val counter = 1
+                var counter = 1
                 var dialog = Dialog(requireContext())
                 val dialogBinding =
                     DialogAddItemBinding.inflate(LayoutInflater.from(requireContext()))
                 dialog.setContentView(dialogBinding.root)
                 dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-                val items = listOf(
-                    "Material",
-                    "Design",
-                    "Components",
-                    "Android",
-                    "Design",
-                    "Components",
-                    "Android",
-                    "Design",
-                    "Components",
-                    "Android",
-                    "Design",
-                    "Components",
-                    "Android",
-                    "Design",
-                    "Components",
-                    "Android",
-                    "Design",
-                    "Components",
-                    "Android",
-                    "Design",
-                    "Components",
-                    "Android",
-                    "Design",
-                    "Components",
-                    "Android",
-                    "Design",
-                    "Components",
-                    "Android"
-                )
+
+                val items = arrayListOf<String>()
+                     if (itemList != null) {
+                         for (item in itemList){
+                             items.add(item.name)
+                         }
+                     }
                 val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
                 (dialogBinding.textInputLayoutItem.editText as? AutoCompleteTextView)?.setAdapter(
                     adapter
@@ -168,12 +149,27 @@ class ListFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        viewModel.addItem(requireContext(), itemName, counter)
+                        viewModel.addItem(requireContext(), itemName, counter){isSuccess->
+                            if (isSuccess){
+                                dialog.dismiss()
+                            }
+                        }
                     }
 
                 }
+                counter = dialogBinding.tvCount.text.toString().toInt()
+                dialogBinding.btnAddCount.setOnClickListener {
+                   dialogBinding.tvCount.text = (++counter).toString()
+                }
+                dialogBinding.btnRemoveCount.setOnClickListener {
+                    if (counter>1){
+                        dialogBinding.tvCount.text = (--counter).toString()
+                    }
+                }
                 dialog.show()
             }
+            }
+
             binding.ivEdit.setOnClickListener {
                 var dialog = Dialog(requireContext())
                 val dialogBinding =
@@ -268,24 +264,29 @@ class ListFragment : Fragment() {
                 dialog.show()
             }
             binding.ivPeoples.setOnClickListener {
-                ListFragmentDirections.actionListFragmentToUserListFragment(shoppingCardData).Go(it)
+                ListFragmentDirections.actionListFragmentToUserListFragment(shoppingCardData).go(it)
             }
 
-            viewModel = ViewModelProvider(this).get(ListViewModel::class.java)
+
             viewModel.shoppingCard = shoppingCardData
             viewModel.refreshItemListData(shoppingCardData.itemList, requireContext())
             binding.rvItemList.layoutManager = LinearLayoutManager(requireContext())
             binding.rvItemList.adapter = shoppinglistAdapter
             observeLiveData()
 
-            shoppinglistAdapter.onClickCB { position, item, checkBox ->
+            shoppinglistAdapter.onClickCB { position, item, checkBox ,itemList->
                 checkBox.isEnabled = false
                 if (checkBox.isChecked) {
                     shoppinglistAdapter.updateItem(position, item, checkBox.isChecked, checkBox)
                 } else {
                     shoppinglistAdapter.updateItem(position, item, checkBox.isChecked, checkBox)
                 }
-                viewModel.updateItemChecked(requireContext(),item,checkBox.isChecked)
+                viewModel.updateItemChecked(requireContext(),item,checkBox.isChecked){isSuccess ->
+                    if (isSuccess){
+                        shoppingCard?.itemList = itemList
+                        binding.tvItemCount.text = shoppingCard?.itemList?.getCheckedText()
+                    }
+                }
             }
 
             shoppinglistAdapter.onLongClickCB { position, item, checkBox ->
@@ -323,6 +324,27 @@ class ListFragment : Fragment() {
                 dialog.show()
                 */
             }
+        }
+    }
+
+    private fun removeList(id: Int?) {
+        id?.let {
+            val alert = AlertDialog.Builder(requireContext())
+            alert.setTitle(getString(R.string.delete_item_shooing_list))
+            alert.setMessage(getString(R.string.are_you_want_delete_shooing_list))
+            alert.setCancelable(false)
+            alert.setPositiveButton(getString(R.string.yes)) { dialogInterface: DialogInterface, i: Int ->
+                viewModel.deleteList(requireContext(),it){ isSuccess->
+                    if (isSuccess){
+                        binding.topAppBar.findNavController().navigateUp()
+                    }
+                }
+            }
+            alert.setNegativeButton(getString(R.string.no)) {dialogInterface: DialogInterface, i: Int ->
+
+            }
+            alert.show()
+
         }
     }
 

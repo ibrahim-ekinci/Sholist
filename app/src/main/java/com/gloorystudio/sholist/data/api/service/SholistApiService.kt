@@ -3,14 +3,12 @@ package com.gloorystudio.sholist.data.api.service
 import com.gloorystudio.sholist.data.api.model.Item.DeleteItem
 import com.gloorystudio.sholist.data.api.model.Item.PatchItem
 import com.gloorystudio.sholist.data.api.model.Item.PostItem
-import com.gloorystudio.sholist.data.api.model.Jwt
 import com.gloorystudio.sholist.data.api.model.auth.*
 import com.gloorystudio.sholist.data.api.model.invitation.DeleteInvitation
 import com.gloorystudio.sholist.data.api.model.invitation.PatchInvitation
 import com.gloorystudio.sholist.data.api.model.invitation.PostInvitation
 import com.gloorystudio.sholist.data.api.model.response.*
 import com.gloorystudio.sholist.data.api.model.shoppingcard.DeleteShoppingCard
-import com.gloorystudio.sholist.data.api.model.shoppingcard.GetShoppingCard
 import com.gloorystudio.sholist.data.api.model.shoppingcard.PostShoppingCard
 import io.reactivex.Single
 import retrofit2.Retrofit
@@ -20,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SholistApiService {
 
-    private val BASE_URL = "https://www.sholist.com/api/"
+    private val BASE_URL = "http://sholist.ibrahimekinci.com/api/"
     private val api = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
@@ -56,7 +54,7 @@ class SholistApiService {
         return api.forgotMyPassword(email)
     }
 
-    fun getShoppingCard(jwt:String,shoppingCardId:String): Single<ApiResponseWithShoppingCard> {
+    fun getShoppingCard(jwt:String,shoppingCardId:Int): Single<ApiResponseWithShoppingCard> {
         return api.getShoppingCard(jwt,shoppingCardId)
     }
 
@@ -69,7 +67,7 @@ class SholistApiService {
     }
 
     fun deleteShoppigCard(deleteShoppigCard: DeleteShoppingCard): Single<ApiResponseWithShoppingCard> {
-        return api.deleteShoppigCard(deleteShoppigCard)
+        return api.deleteShoppigCard(deleteShoppigCard.jwt,deleteShoppigCard.shoppingCardId)
     }
 
     fun postItem(postItem: PostItem): Single<ApiResponseWithShoppingCardAndItemList> {
@@ -78,7 +76,7 @@ class SholistApiService {
 
 
     fun deleteItem(deleteItem: DeleteItem): Single<ApiResponse> {
-        return api.deleteItem(deleteItem)
+        return api.deleteItem(deleteItem.jwt ,deleteItem.itemId)
     }
 
 

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.gloorystudio.sholist.Go
+import com.gloorystudio.sholist.go
 import com.gloorystudio.sholist.LoadingDialogShow
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.FragmentVerificationBinding
@@ -43,7 +43,7 @@ class VerificationFragment : Fragment() {
             LoadingDialogShow(requireContext())
         }
         binding.btnLogin.setOnClickListener {
-            VerificationFragmentDirections.actionVerificationFragmentToLoginFragment().Go(it)
+            VerificationFragmentDirections.actionVerificationFragmentToLoginFragment().go(it)
         }
     }
 

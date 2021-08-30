@@ -5,7 +5,7 @@ import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.data.db.entity.ShoppingList
 import com.gloorystudio.sholist.data.db.entity.ShoppingListWithItemsAndUsers
 import com.gloorystudio.sholist.data.db.entity.User
-
+/*
 @Dao
 interface SholistDao {
 /*
@@ -37,40 +37,40 @@ interface SholistDao {
     suspend fun insertShoppingList(shoppingList: ShoppingList)
 
     @Query("DELETE FROM shoppinglist WHERE id=:id")
-    suspend fun deleteShoppingList(id:String)
+    suspend fun deleteShoppingList(id:Int)
 
     @Query("SELECT * FROM user WHERE shoppingListId=:shoppingListId")
-    suspend fun getAllUser(shoppingListId:String):List<User>
+    suspend fun getAllUser(shoppingListId:Int):List<User>
 
     @Insert
     suspend fun insertAllUser(list: List<User>)
 
     @Query("DELETE FROM user WHERE shoppingListId=:shoppingListId")
-    suspend fun deleteAllUser(shoppingListId:String)
+    suspend fun deleteAllUser(shoppingListId:Int)
 
     @Insert
     suspend fun insertUser(user: User)
 
     @Query("DELETE FROM user WHERE id=:id")
-    suspend fun deleteUser(id:String)
+    suspend fun deleteUser(id:Int)
 
     @Query("SELECT * FROM item")
     suspend fun getAllItems():List<Item>
 
     @Query("SELECT * FROM item WHERE shoppingListId=:shoppingListId")
-    suspend fun getAllItems(shoppingListId:String):List<Item>
+    suspend fun getAllItems(shoppingListId:Int):List<Item>
 
     @Insert
     suspend fun insertAllItems(list: List<Item>)
 
     @Query("DELETE FROM item WHERE shoppingListId=:shoppingListId")
-    suspend fun deleteAllItem(shoppingListId: String)
+    suspend fun deleteAllItem(shoppingListId: Int)
 
     @Insert
     suspend fun insertItem(item: Item)
 
     @Query("DELETE FROM item WHERE id=:id")
-    suspend fun deleteItem(id:String)
+    suspend fun deleteItem(id:Int)
 
 
     @Transaction
@@ -96,10 +96,10 @@ interface SholistDao {
 
     @Transaction
     @Query("SELECT * FROM shoppinglist WHERE id=:id")
-    suspend fun getShoppingListWithItemsAndUsers(id: String): ShoppingListWithItemsAndUsers
+    suspend fun getShoppingListWithItemsAndUsers(id: Int): ShoppingListWithItemsAndUsers
 
     @Transaction
-    suspend fun deleteShoppnigListWithItemsAndUsers(id: String){
+    suspend fun deleteShoppnigListWithItemsAndUsers(id: Int){
         deleteShoppingList(id)
         deleteAllItem(id)
         deleteAllUser(id)
@@ -107,9 +107,26 @@ interface SholistDao {
 
     @Transaction
     suspend fun updateDefaulItemList(itemList:List<Item>){
-        deleteAllItem("default")
+        deleteAllItem(-1)
         insertAllItems(itemList)
     }
 
+    @Query("DELETE FROM user")
+    suspend fun clearAllUser()
+
+    @Query("DELETE FROM item")
+    suspend fun clearAllItem()
+
+    @Query("DELETE FROM shoppinglist")
+    suspend fun clearAllShoppingList()
+
+    @Transaction
+    suspend fun clearAll(){
+        clearAllItem()
+        clearAllUser()
+        clearAllShoppingList()
+    }
 
 }
+
+ */

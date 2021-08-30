@@ -1,16 +1,13 @@
 package com.gloorystudio.sholist.data.api.service
 
-import com.gloorystudio.sholist.data.api.model.Item.DeleteItem
 import com.gloorystudio.sholist.data.api.model.Item.PatchItem
 import com.gloorystudio.sholist.data.api.model.Item.PostItem
-import com.gloorystudio.sholist.data.api.model.Jwt
 import com.gloorystudio.sholist.data.api.model.auth.*
 import com.gloorystudio.sholist.data.api.model.invitation.DeleteInvitation
 import com.gloorystudio.sholist.data.api.model.invitation.PatchInvitation
 import com.gloorystudio.sholist.data.api.model.invitation.PostInvitation
 import com.gloorystudio.sholist.data.api.model.response.*
 import com.gloorystudio.sholist.data.api.model.shoppingcard.DeleteShoppingCard
-import com.gloorystudio.sholist.data.api.model.shoppingcard.GetShoppingCard
 import com.gloorystudio.sholist.data.api.model.shoppingcard.PostShoppingCard
 import io.reactivex.Single
 import retrofit2.http.*
@@ -44,7 +41,7 @@ interface SholistApi {
 
     //Google ile Giriş
     @POST("loginViaGoogle")
-    fun loginWithGoogle(@Body loginWithGoogle: LoginWithGoogle):Single<ApiResponseWithJwtAndTt>
+    fun loginWithGoogle(@Body loginWithGoogle: LoginWithGoogle): Single<ApiResponseWithJwtAndTt>
 
     //Parolamı Unuttum - Kurtarma E-postası İste
     @FormUrlEncoded
@@ -57,13 +54,13 @@ interface SholistApi {
     //Alışveriş Listesi Getir
     @GET("shoppingCard")
     fun getShoppingCard(
-        @Query("jwt")jwt: String,
-        @Query("shoppingCardId")shoppingCardId: String
+        @Query("jwt") jwt: String,
+        @Query("shoppingCardId") shoppingCardId: Int
     ): Single<ApiResponseWithShoppingCard>
 
     //Sahibi Olunan Bütün Alışveriş Listesilerini Getir
     @GET("shoppingCardAll")
-    fun getShoppingCardAll( @Query("jwt")jwt: String): Single<ApiResponseWithShoppingCardList>
+    fun getShoppingCardAll(@Query("jwt") jwt: String): Single<ApiResponseWithShoppingCardList>
 
     //Alışveriş Listesi Oluştur
     @POST("shoppingCard")
@@ -71,7 +68,7 @@ interface SholistApi {
 
     //Alışveriş Listesini Sil
     @DELETE("shoppingCard")
-    fun deleteShoppigCard(@Body deleteShoppigCard: DeleteShoppingCard): Single<ApiResponseWithShoppingCard>
+    fun deleteShoppigCard(@Query("jwt") jwt: String, @Query("shoppingCardId") shoppingCardId: Int): Single<ApiResponseWithShoppingCard>
 
     //Alışveriş Listesine Ürün Ekle
     @POST("item")
@@ -79,7 +76,7 @@ interface SholistApi {
 
     //Alışveriş Listesinden Ürün Silme
     @DELETE("item")
-    fun deleteItem(@Body deleteItem: DeleteItem): Single<ApiResponse>
+    fun deleteItem(@Query("jwt") jwt: String, @Query("itemId") itemId: Int): Single<ApiResponse>
 
     //Ürün Alındı/Alınmadı Olarak İşaretleme
     @PATCH("item")
@@ -87,7 +84,7 @@ interface SholistApi {
 
     //Alışveriş Listesine Eklenmek İçin Gönderilmiş İstekleri Görüntüleme
     @GET("invitation")
-    fun getInvitation( @Query("jwt")jwt: String): Single<ApiResponseWithInvitation>
+    fun getInvitation(@Query("jwt") jwt: String): Single<ApiResponseWithInvitation>
 
     //Alışveriş Listesine Üye Ekleme İsteği Gönderme
     @POST("invitation")
@@ -107,12 +104,15 @@ interface SholistApi {
 
     //İsim Değiştirme
     @PATCH("user")
-    fun changeName( @Query("jwt")jwt: String, @Query("newName")newName: String): Single<ApiResponse>
+    fun changeName(
+        @Query("jwt") jwt: String,
+        @Query("newName") newName: String
+    ): Single<ApiResponse>
 
     //Alışveriş Listesine Eklenmek İçin Gönderilmiş İstekleri Görüntüleme
     @GET("isCurrentTemplate")
-    fun getTemplateVersion( @Query("jwt")jwt: String): Single<ApiResponseWithVersion>
+    fun getTemplateVersion(@Query("jwt") jwt: String): Single<ApiResponseWithVersion>
 
     @GET("templateItems")
-    fun getTemplateItems( @Query("jwt")jwt: String): Single<ApiResponseWithItemList>
+    fun getTemplateItems(@Query("jwt") jwt: String): Single<ApiResponseWithItemList>
 }

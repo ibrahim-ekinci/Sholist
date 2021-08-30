@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey
 @Entity
 data class ShoppingList(
     @ColumnInfo(name = "id")
-    var id: String,
+    var id: Int,
     @ColumnInfo(name = "name")
     var name: String,
     @ColumnInfo(name = "creatorId")
-    var creatorId: String,
+    var creatorId: Int,
     @ColumnInfo(name = "color")
     var color: Int
 ) {

@@ -8,20 +8,20 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gloorystudio.sholist.*
 import com.gloorystudio.sholist.adapter.InvitationAdapter
 import com.gloorystudio.sholist.adapter.ShoppingCardAdapter
+import com.gloorystudio.sholist.base.BaseFragment
 import com.gloorystudio.sholist.databinding.DialogInvitationBinding
 import com.gloorystudio.sholist.databinding.DialogNewlistBinding
 import com.gloorystudio.sholist.databinding.FragmentMainBinding
 import com.gloorystudio.sholist.viewmodel.main.MainViewModel
 
 
-class MainFragment : Fragment() {
+class MainFragment : BaseFragment() {
 
     private lateinit var viewModel: MainViewModel
     private val shoppingCardAdapter = ShoppingCardAdapter(arrayListOf())
@@ -31,8 +31,6 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         setHasOptionsMenu(true)
     }
 
@@ -41,26 +39,19 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.green_dark)
 
         //TODO: DAVET LİSTELERİ ÇEKİLECEK.
-
-
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
+        viewModel.refreshShoppingCardsData(requireContext(), requireActivity())
         //For Invitation Dialog
         dialogBindingInvitations =
             DialogInvitationBinding.inflate(LayoutInflater.from(requireContext()))
@@ -78,7 +69,7 @@ class MainFragment : Fragment() {
         observeInvitationsLiveData(dialogBindingInvitations)
 
         //For ShoppingCardList
-        viewModel.refreshShoppingCardsData(requireContext())
+
         binding.rvShopingcards.layoutManager = LinearLayoutManager(requireContext())
         binding.rvShopingcards.adapter = shoppingCardAdapter
         observeShoppingCardsLiveData()
@@ -90,13 +81,13 @@ class MainFragment : Fragment() {
                 }
                 R.id.menu_item_settings -> {
                     MainFragmentDirections.actionMainFragmentToSettingsFragment()
-                        .Go(binding.topAppBar)
+                        .go(binding.topAppBar)
                 }
-                R.id.menu_item_logout ->{
-                    viewModel.logOut(requireContext(),requireActivity())
+                R.id.menu_item_logout -> {
+                    viewModel.logOut(requireContext(), requireActivity())
                 }
                 R.id.menu_item_invitation -> {
-                    ShowInvitations()
+                    showInvitations()
                 }
             }
             true
@@ -104,7 +95,7 @@ class MainFragment : Fragment() {
 
         shoppingCardAdapter.onClickCard { shoppingCard ->
             MainFragmentDirections.actionMainFragmentToListFragment(shoppingCard)
-                .Go(binding.topAppBar)
+                .go(binding.topAppBar)
         }
 
 
@@ -191,9 +182,7 @@ class MainFragment : Fragment() {
                 }
             }
             dialog.show()
-            println("jwt-" + currentData.currentJwt)
         }
-
     }
 
     override fun onDestroyView() {
@@ -201,8 +190,7 @@ class MainFragment : Fragment() {
         viewModel.removeInvitationListener()
     }
 
-    private fun ShowInvitations() {
-
+    private fun showInvitations() {
         dialogInvitations.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialogBindingInvitations.btnCancel.setOnClickListener {
             dialogInvitations.cancel()
@@ -213,19 +201,19 @@ class MainFragment : Fragment() {
     }
 
     private fun observeShoppingCardsLiveData() {
-        viewModel.ShoppingCards.observe(viewLifecycleOwner, { cards ->
+        viewModel.shoppingCards.observe(viewLifecycleOwner, { cards ->
             cards?.let {
-
                 shoppingCardAdapter.updateShopingCard(it)
+                binding.llEmptyList.visibility = View.GONE
             }
         })
-        viewModel.ShoppingCardsIsEmpty.observe(viewLifecycleOwner, { isEmpty ->
+        viewModel.shoppingCardsIsEmpty.observe(viewLifecycleOwner, { isEmpty ->
             isEmpty?.let {
                 if (it) binding.llEmptyList.visibility = View.VISIBLE
                 else binding.llEmptyList.visibility = View.GONE
             }
         })
-        viewModel.ShoppingCardsError.observe(viewLifecycleOwner, { error ->
+        viewModel.shoppingCardsError.observe(viewLifecycleOwner, { error ->
             error?.let {
                 if (it) {
                     //TODO: Eror yazdırılabilir.
@@ -233,22 +221,21 @@ class MainFragment : Fragment() {
                 }
             }
         })
-        viewModel.ShoppingCardsLoading.observe(viewLifecycleOwner, { loading ->
+        viewModel.shoppingCardsLoading.observe(viewLifecycleOwner, { loading ->
             loading?.let {
                 if (loading) LoadingDialogShow(requireContext())
                 else LoadingDialogCancel()
             }
         })
-
     }
 
     private fun observeInvitationsLiveData(dialogBinding: DialogInvitationBinding) {
-        viewModel.Invitations.observe(viewLifecycleOwner, { invitations ->
+        viewModel.invitations.observe(viewLifecycleOwner, { invitations ->
             invitations?.let {
                 invitationAdapter.updateInvitation(it)
             }
         })
-        viewModel.InvitationsIsEmpty.observe(viewLifecycleOwner, { isEmpty ->
+        viewModel.invitationsIsEmpty.observe(viewLifecycleOwner, { isEmpty ->
             isEmpty?.let {
                 if (isEmpty) {
                     dialogBinding.tvIsempty.visibility = View.VISIBLE

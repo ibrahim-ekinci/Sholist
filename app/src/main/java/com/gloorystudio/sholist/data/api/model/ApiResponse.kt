@@ -55,7 +55,7 @@ data class ApiResponseWithShoppingCardList(
     override val state: String,
     override val message: String?,
     override val code: Int?,
-    val shoppingCard: List<ShoppingCard>
+    val shoppingCards: List<ShoppingCard>
 ) : IApiResponse
 
 data class ApiResponseWithShoppingCardAndItemList(

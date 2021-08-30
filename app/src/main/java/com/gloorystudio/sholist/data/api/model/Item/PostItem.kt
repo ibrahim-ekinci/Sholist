@@ -1,7 +1,7 @@
 package com.gloorystudio.sholist.data.api.model.Item
 
 data class PostItem(
-    val items: Items,
+    val items: List<Items>,
     val jwt: String,
-    val shoppingCardId: String
+    val shoppingCardId: Int
 )

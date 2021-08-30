@@ -14,11 +14,11 @@ import com.gloorystudio.sholist.data.db.entity.Item
 
 class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Adapter<ShoppingListAdapter.ShoppingListViewHolder>() {
 
-    private var actionFragmentList: ((Int,Item, CheckBox)->Unit)?= null
+    private var actionFragmentList: ((Int,Item, CheckBox,ArrayList<Item>)->Unit)?= null
     private var actionFragmentImageView: ((Item, ImageView)->Unit)?= null
     private var actionFragmentRemove: ((Int,Item, CheckBox)->Unit)?= null
 
-    fun onClickCB(actionFragmentList:(Int,Item, CheckBox)->Unit){
+    fun onClickCB(actionFragmentList:(Int,Item, CheckBox, ArrayList<Item>)->Unit){
         this.actionFragmentList=actionFragmentList
     }
     fun onClickIV(actionFragmentImageView:(Item, ImageView)->Unit){
@@ -81,7 +81,7 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
                 true
             }
             binding.cbItem.setOnClickListener {
-                actionFragmentList?.invoke(adapterPosition,itemList[adapterPosition],binding.cbItem)
+                actionFragmentList?.invoke(adapterPosition,itemList[adapterPosition],binding.cbItem,itemList)
             }
 
             binding.cardItem.setOnClickListener {
@@ -91,7 +91,7 @@ class ShoppingListAdapter(private val itemList :ArrayList<Item>):RecyclerView.Ad
                 actionFragmentImageView?.invoke(itemList[adapterPosition],binding.ivIcon)
             }
         }
-        fun bind(item: Item, actionFragmentList: ((Int,Item, CheckBox) -> Unit)?, actionFragmentImageView: ((Item, ImageView) -> Unit)?, actionFragmentRemove: ((Int,Item, CheckBox) -> Unit)?){
+        fun bind(item: Item, actionFragmentList: ((Int,Item, CheckBox,ArrayList<Item>) -> Unit)?, actionFragmentImageView: ((Item, ImageView) -> Unit)?, actionFragmentRemove: ((Int,Item, CheckBox) -> Unit)?){
             binding.item=item
             if (itemList[adapterPosition].checked){
                 binding.cbItem.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG

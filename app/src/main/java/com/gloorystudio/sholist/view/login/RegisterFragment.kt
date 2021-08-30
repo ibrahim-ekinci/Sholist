@@ -9,7 +9,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.gloorystudio.sholist.Go
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.databinding.FragmentRegisterBinding
 import com.gloorystudio.sholist.isEmailTrue
@@ -35,15 +34,8 @@ class RegisterFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
         binding.btnRegister.setOnClickListener { btn ->
             if (isFieldsFilling()) {
-                //Todo Remove Navigate
-                RegisterFragmentDirections.actionRegisterFragmentToUserInfoFragment(
-                    "name",
-                    "123",
-                    "test@test.com"
-                ).Go(btn)
-
                 viewModel.signUp(
-                    btn,
+                    binding,
                     requireContext(),
                     binding.etRegisterEmail.text.toString(),
                     binding.etRegisterPassword.text.toString()

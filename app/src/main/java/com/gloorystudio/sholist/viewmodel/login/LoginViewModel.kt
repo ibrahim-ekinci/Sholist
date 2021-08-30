@@ -1,7 +1,9 @@
 package com.gloorystudio.sholist.viewmodel.login
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
@@ -10,8 +12,9 @@ import androidx.lifecycle.viewModelScope
 import com.gloorystudio.sholist.LoadingDialogCancel
 import com.gloorystudio.sholist.LoadingDialogShow
 import com.gloorystudio.sholist.R
-import com.gloorystudio.sholist.currentData.currentJwt
-import com.gloorystudio.sholist.currentData.currentUser
+import com.gloorystudio.sholist.CurrentData.currentJwt
+import com.gloorystudio.sholist.CurrentData.currentUser
+import com.gloorystudio.sholist.data.api.ErrorCode.*
 import com.gloorystudio.sholist.data.api.model.auth.LoginWithGoogle
 import com.gloorystudio.sholist.data.api.model.auth.SignIn
 import com.gloorystudio.sholist.data.api.model.response.ApiResponseWithJwt
@@ -34,6 +37,8 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import com.gloorystudio.sholist.data.firebase.*
+import com.gloorystudio.sholist.isHttpExc
+import com.gloorystudio.sholist.view.main.MainActivity
 
 class LoginViewModel : ViewModel() {
     private lateinit var auth: FirebaseAuth
@@ -62,8 +67,6 @@ class LoginViewModel : ViewModel() {
                     user?.let { u ->
                         loginWithGoogleApi(activity, u)
                     }
-                    println(user.email)
-                    println(user.displayName)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(ContentValues.TAG, "signInWithCredential:failure", task.exception)
@@ -95,8 +98,11 @@ class LoginViewModel : ViewModel() {
 
                         if (response.registered) {
                             saveJwtAndUser(activity, response.jwt, response.member)
+                            val intent = Intent(activity, MainActivity::class.java)
+                            readJwtAndUser(activity)
+                            activity.finish()
+                            activity.startActivity(intent)
 
-                            //TODO: MAİN FLOW A YÖNLENDİR.
                         } else {
                             //TODO:  kullanıcı isminin belirlenmemiş olduğunu belirtir
                             //YÖNLENDİR.
@@ -110,16 +116,11 @@ class LoginViewModel : ViewModel() {
 
                 })
         )
-        saveJwtAndUser(
-            activity,
-            "response.jwt",
-            User("12", null, "test@email", true, "ibrahim", "ibrahim", "123", null)
-        )
         readJwtAndUser(activity)
     }
 
 
-    fun loginWithEmailAndPass(context: Context, email: String, password: String) {
+    fun loginWithEmailAndPass(context: Context,activity: Activity, email: String, password: String) {
         LoadingDialogShow(context)
         disposable.add(
             apiService.signIn(SignIn(getDeviceId(context), email, password))
@@ -130,12 +131,15 @@ class LoginViewModel : ViewModel() {
                         LoadingDialogCancel()
                         if (response.state == "succes") {
                             saveJwtAndUser(context, response.jwt, response.member)
-                            //TODO: MAİN FLOW A YÖNLENDİR.
+                            val intent = Intent(context, MainActivity::class.java)
+                            context.startActivity(intent)
+                            activity.finish()
                         } else {
                             when (response.code) {
                                 402 -> {
                                     //TODO:  kullanıcı isminin belirlenmemiş olduğunu belirtir
                                     //YÖNLENDİR.
+                                    
                                 }
                                 205 -> {
                                     //TODO:  kullanıcı email'ini onaylamadığını belirtir
@@ -147,8 +151,17 @@ class LoginViewModel : ViewModel() {
 
                     override fun onError(e: Throwable) {
                         LoadingDialogCancel()
-                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-
+                        e.isHttpExc { code ->
+                            when (code) {
+                                UNCONFIRMED_MAIL_205->""
+                                UNCONFIRMED_USERNAME_412->""
+                                INVALID_JSON_400 -> ""
+                                INVALID_PERMISSION_403 -> ""
+                                SERVER_ERROR_500 -> ""
+                                else -> Toast.makeText(context, e.message, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
                     }
 
                 })

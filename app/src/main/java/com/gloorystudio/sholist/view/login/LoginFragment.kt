@@ -12,15 +12,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.gloorystudio.sholist.Go
+import com.gloorystudio.sholist.go
 import com.gloorystudio.sholist.R
 import com.gloorystudio.sholist.data.firebase.getStaticToken
 import com.gloorystudio.sholist.data.getJwt
-import com.gloorystudio.sholist.data.setJwt
 import com.gloorystudio.sholist.databinding.FragmentLoginBinding
 import com.gloorystudio.sholist.isEmailTrue
 import com.gloorystudio.sholist.isPasswordTrue
-import com.gloorystudio.sholist.view.main.MainActivity
 import com.gloorystudio.sholist.viewmodel.login.LoginViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -52,26 +50,19 @@ class LoginFragment : Fragment() {
         viewModel.initialAuth()
         getStaticToken()
         binding.llRegister.setOnClickListener {
-            LoginFragmentDirections.actionLoginFragmentToRegisterFragment().Go(it)
-            lifecycleScope.launch {
-                setJwt(requireContext(),"sonTEst")
-            }
+            LoginFragmentDirections.actionLoginFragmentToRegisterFragment().go(it)
         }
         binding.textViewForget.setOnClickListener {
-            LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment().Go(it)
+            LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment().go(it)
             lifecycleScope.launch {
                 println(getJwt(requireContext()))
             }
         }
         binding.btnLogin.setOnClickListener {
-            //TODO:REMOVE navigation
             if (isFieldsFilling()) {
-                val intent = Intent(requireContext(), MainActivity::class.java)
-                startActivity(intent)
-                requireActivity().finish()
-
                 viewModel.loginWithEmailAndPass(
                     requireContext(),
+                    requireActivity(),
                     binding.etLoginEmail.text.toString(),
                     binding.etLoginPasword.text.toString()
                 )

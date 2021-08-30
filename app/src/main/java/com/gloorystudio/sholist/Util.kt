@@ -8,24 +8,26 @@ import android.view.View
 import android.widget.TextView
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
+import com.gloorystudio.sholist.data.api.ErrorCode
 import com.gloorystudio.sholist.data.db.entity.Item
 import com.gloorystudio.sholist.data.db.entity.ShoppingList
 import com.gloorystudio.sholist.data.db.entity.ShoppingListWithItemsAndUsers
 import com.gloorystudio.sholist.data.db.entity.User
 import com.gloorystudio.sholist.model.DefItem
 import com.gloorystudio.sholist.model.ShoppingCard
+import retrofit2.HttpException
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-object currentData{
+object CurrentData{
     var currentUser:User?=null
     var currentJwt:String?=null
 }
 
 
 //for short fragment train
-fun NavDirections.Go(view: View) {
+fun NavDirections.go(view: View) {
     view.let {
         val action = this
         it.findNavController().navigate(action)
@@ -52,7 +54,7 @@ fun ArrayList<User>.getUserNames(): String {
             }
         }
     }
-    return names
+    return names.substring(1)
 }
 
 fun ArrayList<Item>.getCheckedText(): String {
@@ -74,7 +76,7 @@ fun LoadingDialogShow(context: Context) {
             dialog.setContentView(R.layout.dialog_loading)
             dialog.setCancelable(false)
             dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
+            // dialog.show()
         }
     }
 
@@ -91,7 +93,7 @@ fun TextView.isEmailTrue(): Boolean {
 
 fun TextView.isPasswordTrue(): Boolean {
     val pass = this.text.toString()
-    return pass.length > 6
+    return pass.length > 8
 }
 
 fun TextView.isNameTrue(): Boolean {
@@ -136,9 +138,10 @@ fun ShoppingCard.toEntity(): ShoppingListWithItemsAndUsers {
     val shoppingList = ShoppingList(this.id, this.name, this.creatorId, this.color)
     return ShoppingListWithItemsAndUsers(shoppingList, this.itemList, this.userList)
 }
-fun ArrayList<ShoppingCard>.toEntity():ArrayList<ShoppingListWithItemsAndUsers>{
-    val newList:ArrayList<ShoppingListWithItemsAndUsers> = arrayListOf()
-    for (shoppingCard in this){
+
+fun ArrayList<ShoppingCard>.toEntity(): ArrayList<ShoppingListWithItemsAndUsers> {
+    val newList: ArrayList<ShoppingListWithItemsAndUsers> = arrayListOf()
+    for (shoppingCard in this) {
         newList.add(shoppingCard.toEntity())
     }
     return newList
@@ -155,25 +158,38 @@ fun ShoppingListWithItemsAndUsers.toModel(): ShoppingCard {
         ArrayList(items)
     )
 }
-fun List<ShoppingListWithItemsAndUsers>.toModel():ArrayList<ShoppingCard>{
-    val newList :ArrayList<ShoppingCard> = arrayListOf()
-    for (shoppingListWithItemsAndUsers in this){
+
+fun List<ShoppingListWithItemsAndUsers>.toModel(): ArrayList<ShoppingCard> {
+    val newList: ArrayList<ShoppingCard> = arrayListOf()
+    for (shoppingListWithItemsAndUsers in this) {
         newList.add(shoppingListWithItemsAndUsers.toModel())
     }
     return newList
 }
-fun List<DefItem>.toEntity():List<Item>{
-    val newList :ArrayList<Item> = arrayListOf()
-    for (defItem in this){
-        newList.add(Item(
-            "default",
-            "default",
-            defItem.name,
-            1,
-            false,
-            defItem.img
-        ))
+
+fun List<DefItem>.toEntity(): List<Item> {
+    val newList: ArrayList<Item> = arrayListOf()
+
+    for (defItem in this) {
+        newList.add(
+            Item(
+                -1,
+                -1,
+                defItem.name,
+                1,
+                false,
+                defItem.img
+            )
+        )
+
     }
     return newList
 }
 
+fun Throwable.isHttpExc(done: (code: ErrorCode) -> Unit) {
+    if (this is HttpException) {
+        this.code().let {
+            done(ErrorCode.getErrorCode(it))
+        }
+    }
+}
