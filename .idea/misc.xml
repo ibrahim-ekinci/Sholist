@@ -9,9 +9,9 @@
         <entry key="app/src/main/res/layout/fragment_forget_password.xml" value="0.20380434782608695" />
         <entry key="app/src/main/res/layout/fragment_list.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.165" />
-        <entry key="app/src/main/res/layout/fragment_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_register.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.4546296296296296" />
         <entry key="app/src/main/res/layout/fragment_user_list.xml" value="0.5263157894736842" />
         <entry key="app/src/main/res/layout/fragment_verification.xml" value="0.25" />

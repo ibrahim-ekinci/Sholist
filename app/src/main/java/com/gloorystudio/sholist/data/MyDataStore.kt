@@ -22,6 +22,7 @@ val USER_MAIL_KEY = stringPreferencesKey("email")
 val USER_NAME_KEY = stringPreferencesKey("name")
 val USER_USERNAME_KEY = stringPreferencesKey("username")
 val ITEM_VERSION = stringPreferencesKey("itemVersion")
+val NIGHT_MODE = intPreferencesKey("nightMode")
 private const val pwJwt = "VsWa@WjoK#9E1F0a"
 private const val pwUser = "N3ACFtp%v20kwA5b"
 
@@ -79,6 +80,17 @@ suspend fun setItemVersion(context: Context, version: String) {
 suspend fun getItemVersion(context: Context): String? {
     val preferences = context.dataStore.data.first()
     return preferences[ITEM_VERSION]?.decrypt(pwUser)
+}
+
+suspend fun setNightMode(context: Context, mode: Int) {
+    context.dataStore.edit { settings ->
+        settings[NIGHT_MODE] = mode
+    }
+}
+
+suspend fun getNightMode(context: Context): Int? {
+    val preferences = context.dataStore.data.first()
+    return preferences[NIGHT_MODE]
 }
 
 suspend fun logout(context: Context) {

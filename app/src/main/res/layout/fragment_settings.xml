@@ -27,6 +27,49 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             <TextView
+                android:id="@+id/tvTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center|start|left|center_vertical"
+                android:text="@string/theme"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <nl.bryanderidder.themedtogglebuttongroup.ThemedToggleButtonGroup
+                android:id="@+id/toggleButtonGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:justifyContent="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTheme"> <!-- this attribute is from the underlying FlexboxLayout -->
+
+                <nl.bryanderidder.themedtogglebuttongroup.ThemedButton
+                    android:id="@+id/btnNightModeAuto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    app:toggle_text="@string/auto" />
+
+                <nl.bryanderidder.themedtogglebuttongroup.ThemedButton
+                    android:id="@+id/btnNightModeDark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    app:toggle_text="@string/dark" />
+
+                <nl.bryanderidder.themedtogglebuttongroup.ThemedButton
+                    android:id="@+id/btnNightModeLite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    app:toggle_text="@string/light" />
+
+            </nl.bryanderidder.themedtogglebuttongroup.ThemedToggleButtonGroup>
+
+            <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +81,7 @@
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/toggleButtonGroup" />
 
 
             <com.google.android.material.textfield.TextInputLayout
@@ -123,7 +166,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:hint="@string/oldpassword"
+                android:hint="@string/oldPassword"
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

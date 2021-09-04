@@ -13,7 +13,7 @@
     android:contentDescription="@string/content_description_settings"
         android:orderInCategory="10"
         android:title="@string/settings"
-        android:visible="false"/>
+        android:visible="true"/>
     <item
         android:id="@+id/menu_item_logout"
         android:contentDescription="@string/content_description_settings"
@@ -25,6 +25,7 @@
         android:orderInCategory="10"
         android:title="invitation"
         app:showAsAction="always"
+        android:visible="false"
         android:icon="@drawable/ic_invitation"
        />
 </menu>
