@@ -104,9 +104,7 @@ interface SholistApi {
 
     //İsim Değiştirme
     @PATCH("user")
-    fun changeName(
-        @Query("jwt") jwt: String,
-        @Query("newName") newName: String
+    fun changeName(@Body() patchUser :PatchUser
     ): Single<ApiResponse>
 
     //Alışveriş Listesine Eklenmek İçin Gönderilmiş İstekleri Görüntüleme

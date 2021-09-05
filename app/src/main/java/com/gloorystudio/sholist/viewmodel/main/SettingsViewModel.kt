@@ -1,6 +1,8 @@
 package com.gloorystudio.sholist.viewmodel.main
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.gloorystudio.sholist.R
@@ -24,6 +26,7 @@ class SettingsViewModel:ViewModel() {
 
     fun changeName(context: Context,newName:String){
         currentJwt?.let {jwt->
+            Log.d(TAG, "changeName:  jwt:$jwt name:$newName")
             disposable.add(apiService.changeName(jwt,newName)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

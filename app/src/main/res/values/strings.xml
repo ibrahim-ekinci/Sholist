@@ -66,7 +66,7 @@
     <string name="google_login">Sign in</string>
     <string name="login_failed">Login failed.</string>
     <string name="mail_hass_been_sent">Mail has been sent. Please check your email.</string>
-    <string name="password_must_be_more_then_six">Password must be more than 8 characters.</string>
+    <string name="password_must_be_more_then_six">Password must be more than 9 characters.</string>
     <string name="invalid_email_address">Invalid e-mail address.</string>
     <string name="please_confirm_term_of_use">Please confirm the terms of use.</string>
     <string name="invalid_name_and_surname">Invalid name and surname.</string>

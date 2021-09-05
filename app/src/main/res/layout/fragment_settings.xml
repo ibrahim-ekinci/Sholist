@@ -120,16 +120,13 @@
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textInputLayout_username"
-
-               >
+                app:layout_constraintTop_toBottomOf="@id/textInputLayout_username">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_name_surname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
-                    android:inputType="textPassword"
                     android:maxLength="30"
                     android:singleLine="true" />
 
